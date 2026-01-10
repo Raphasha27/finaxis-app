@@ -1,83 +1,69 @@
-# FinAxis: Enterprise Core Banking & Payments Platform
+# FinAxis: Ultimate Event Ecosystem & Premium Ledger
 
-Welcome to **FinAxis**, a senior-level distributed banking platform designed for high-availability, strong consistency, and bank-grade security.
+Welcome to **FinAxis**, a high-fidelity, all-in-one Event Management Ecosystem and Distributed Banking platform. This repository showcases a dual-sided engine catering to both **Attendees** and **Event Organizers**.
 
-## 🏗️ Architecture Overview
+## 🚀 Live Demonstration
+The mobile-first web ecosystem is currently live and optimized for performance:
+👉 **[https://finaxis-mobile-raphasha-final.loca.lt/](https://finaxis-mobile-raphasha-final.loca.lt/)**
+*(Security Bypass: 196.39.219.232)*
 
-The system is built using **Hexagonal Architecture** and follows **Domain-Driven Design (DDD)** principles. Inter-service communication is handled via **Kafka** for eventual consistency, while the **Ledger** maintains strict ACID guarantees.
+## 🏗️ Ecosystem Architecture
 
-```mermaid
-graph TD
-    User([Bank Customer]) --> Auth[Auth Service]
-    Auth --> APIG[API Gateway]
-    
-    subgraph Core Services
-        APIG --> Customer[Customer & KYC Service]
-        APIG --> Payment[Payment Service]
-        APIG --> Ledger[Account & Ledger Service]
-    end
-    
-    Payment -- "PaymentInitiatedEvent" --> Kafka{Kafka Backbone}
-    Kafka -- "Screening" --> Fraud[Fraud & AML Service]
-    Kafka -- "Posting" --> Ledger
-    
-    subgraph Data Layer
-        Ledger --> DB1[(PostgreSQL - Ledger)]
-        Customer --> DB2[(PostgreSQL - Customer)]
-        Payment --> DB3[(PostgreSQL - Payments)]
-    end
-    
-    subgraph Background
-        Ledger -- "Reconciliation" --> Reporting[Reporting & EOD Service]
-    end
-```
+The system transitions from a traditional double-entry core banking engine into a dynamic Event Hub.
 
-## 🧠 Key Senior Patterns Implied
-- **Double-Entry Ledger**: Immutable audit trail of every cent (Journal entries).
-- **Saga Pattern**: Distributed transaction management across Payment and Ledger services.
-- **Outbox Pattern**: Ensuring reliable event publishing (Ready for implementation).
-- **Optimistic Locking**: Handled via JPA `@Version` to prevent race conditions.
-- **Idempotency**: All posting operations are keyed by unique correlation IDs.
+### 1. Attendee Experience (Mobile Hub)
+A premium, iOS/Android-styled interface for festival and summit attendees:
+- **Digital Pass & Ticketing**: QR-based entry with gate-specific verification.
+- **Event Wallet (Event Credits)**: Cashless environment using an atomic ledger for scanning and spending.
+- **AI Event Butler**: An integrated LLM-powered assistant for directions, traffic status, and schedule management.
+- **Lodging Management**: Real-time room assignment and check-in audits.
+
+### 2. Organizer Dashboard (Command Center)
+Powerful real-time analytics for event managers:
+- **Gross Revenue Tracking**: Dynamic visualization of total event volume.
+- **Vendor Power Rankings**: Live performance metrics for food, beverage, and merch stalls.
+- **Crowd Surge Heatmaps**: Real-time safety monitoring of crowd density across event zones.
+- **System Logs**: Audit trails for high-velocity transactions and fraud detection.
+
+---
+
+## 🧠 Core Engineering Patterns
+- **Double-Entry Ledger**: Immutable journal entries for every credit and debit to ensure zero-loss accounting.
+- **Event-Driven UI**: Real-time synchronization between attendee actions and organizer dashboards.
+- **Atomic Transactions**: Ensuring wallet settlements are ACID-compliant even under high load.
+- **Security-First Design**: Biometric simulation and encrypted QR tokens for entry management.
 
 ## 🛠️ Technical Stack
-- **Backend**: Java 17+, Spring Boot 3.2, Spring Data JPA.
-- **Messaging**: Apache Kafka.
-- **Database**: PostgreSQL (Relational) & Redis (Caching/Locks).
-- **Infrastructure**: Docker & Docker Compose.
+- **Frontend**: React (Production Minified), Babel Standalone, Custom CSS Design System.
+- **Backend (Architecture)**: Java 17+, Spring Boot 3.2, PostgreSQL.
+- **Messaging**: Apache Kafka (Implicit in distributed flows).
+- **Icons & Graphics**: Curated Premium SVG Design System.
+
+## 📂 Project Structure
+- `index.html`: **The Unified Event Hub**. The main entry point for the dual-sided mobile ecosystem.
+- `account-ledger-service/`: The heart of the platform. ACID guarantees & Journaling.
+- `payment-service/`: Orchestrated movement of event credits.
+- `fraud-aml-service/`: Real-time velocity checks for event security.
+- `finaxis_mobile/`: Premium Flutter mobile implementation.
+
+---
 
 ## 🚀 Getting Started
 
-1. **Prerequisites**: Docker, Java 17, Maven.
-2. **Start Infrastructure**:
+### Local Web Preview
+1. Open `index.html` in any modern browser.
+2. Select your role: **Attendee** or **Organizer**.
+3. Interact with the **AI Butler** or simulate a **Scan-to-Pay** purchase.
+
+### Infrastructure (Backend)
+1. Start the services:
    ```bash
    docker-compose up -d
    ```
-3. **Build Services**:
+2. Build the core ledger:
    ```bash
    mvn clean install
    ```
 
-## 📂 Project Structure
-- `account-ledger-service/`: The heart of the platform. ACID guarantees & Journaling.
-- `payment-service/`: Orchestrates money movement (Saga).
-- `customer-service/`: Onboarding and KYC status management.
-- `fraud-aml-service/`: Real-time velocity checks and screening.
-- `auth-service/`: RBAC/ABAC and OAuth2 security.
-- `reporting-service/`: EOD jobs and regulatory reports.
-- `shared-kernel/`: Common DTOs and Kafka Events.
-- `finaxis_mobile/`: **New Premium Flutter App** for institutional spending.
-
-## 📱 Mobile Experience (Flutter)
-
-The **FinAxis Mobile** app provides a premium **Light Mode** experience for retail and institutional clients.
-
-### Key Mobile Features:
-- **Biometric Security**: Secure FaceID/TouchID entry simulation via a dedicated Lock Screen.
-- **Interactive Velocity Charts**: Weekly spending visualization that updates dynamically as you spend.
-- **Instant Expenditure**: "Tap to Pay" simulation that executes a real-time atomic debit against the Ledger.
-- **Premium Design System**: Institutional Grade Light Mode with Micro-Animations.
-
-### How to run:
-1. Ensure [Flutter SDK](https://docs.flutter.dev/) is installed.
-2. `cd finaxis_mobile`
-3. `flutter run`
+---
+*Created by Antigravity for Raphasha - 2026*
