@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   StyleSheet, 
   Text, 
@@ -10,8 +10,13 @@ import {
   Modal,
   TextInput,
   Image,
-  Animated
+  Animated,
+  Alert,
+  Platform
 } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
+import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
 import { 
   Home, 
   Scan, 
@@ -22,10 +27,23 @@ import {
   ChevronRight, 
   ArrowLeft,
   LayoutDashboard,
-  Hotel
+  Hotel,
+  Fingerprint,
+  ShieldCheck,
+  Bell,
+  Lock
 } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
+
+// Notification Configuration
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
 
 const COLORS = {
   primary: '#2563eb',
@@ -39,11 +57,74 @@ const COLORS = {
 };
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState(null); // null, 'attendee', 'organizer'
   const [view, setView] = useState('home'); // home, tickets, assistant
   const [balance, setBalance] = useState(1200);
   const [activeModal, setActiveModal] = useState(null);
   
+  // Animation for the lock screen
+  const lockAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+    
+    // Animate the lock icon
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(lockAnim, { toValue: 1, duration: 1500, useNativeDriver: true }),
+        Animated.timing(lockAnim, { toValue: 0, duration: 1500, useNativeDriver: true })
+      ])
+    ).start();
+  }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    if (Device.isDevice) {
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        return;
+      }
+    }
+  };
+
+  const handleBiometricAuth = async () => {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const supportedTypes = await LocalAuthentication.supportedAuthenticationTypesAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+    if (!hasHardware || !isEnrolled) {
+      // Fallback for simulators or devices without biometrics
+      setIsAuthenticated(true);
+      return;
+    }
+
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: 'Authenticate to access FinAxis Premium',
+      fallbackLabel: 'Use Passcode',
+    });
+
+    if (result.success) {
+      setIsAuthenticated(true);
+    } else {
+      Alert.alert('Authentication Failed', 'Please try again.');
+    }
+  };
+
+  const sendTransactionNotification = async (amount, vendor) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Payment Authorized 💳",
+        body: `R ${amount} spent at ${vendor}. New balance: R ${balance - amount}`,
+      },
+      trigger: null, // send immediately
+    });
+  };
+
   const [vendorSales, setVendorSales] = useState([
     { id: 1, name: 'Tech Merch Store', totalSales: 21400, transactions: 62, color: '#6366f1' },
     { id: 2, name: 'Summit Cafe', totalSales: 11200, transactions: 248, color: '#f59e0b' },
@@ -52,6 +133,34 @@ export default function App() {
 
   const totalRevenue = useMemo(() => vendorSales.reduce((acc, v) => acc + v.totalSales, 0), [vendorSales]);
 
+  // 1. LOCK SCREEN (Biometrics)
+  if (!isAuthenticated) {
+    return (
+      <View style={styles.authScreen}>
+        <Animated.View style={{ 
+          transform: [{ 
+            scale: lockAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.1] }) 
+          }],
+          opacity: lockAnim.interpolate({ inputRange: [0, 1], outputRange: [0.8, 1] })
+        }}>
+          <View style={styles.lockCircle}>
+            <ShieldCheck color="white" size={48} />
+          </View>
+        </Animated.View>
+        <Text style={styles.authTitle}>FinAxis Secure</Text>
+        <Text style={styles.authSubtitle}>Institutional Grade Entry</Text>
+        
+        <TouchableOpacity style={styles.biometricBtn} onPress={handleBiometricAuth}>
+          <Fingerprint color="white" size={24} />
+          <Text style={styles.biometricBtnText}>Authenticate</Text>
+        </TouchableOpacity>
+        
+        <Text style={styles.footerText}>Secured by FinAxis Core v2.4</Text>
+      </View>
+    );
+  }
+
+  // 2. ROLE SELECTION
   if (!role) {
     return (
       <View style={styles.setupScreen}>
@@ -93,8 +202,13 @@ export default function App() {
           <Text style={styles.headerLabel}>{role === 'organizer' ? 'Admin Portal' : 'Event Active'}</Text>
           <Text style={styles.headerTitle}>Hi, Raphasha!</Text>
         </View>
-        <View style={styles.headerAction}>
-          <User color={COLORS.text} size={20} />
+        <View style={styles.headerIcons}>
+          <TouchableOpacity style={styles.headerAction}>
+            <Bell color={COLORS.text} size={20} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.headerAction} onPress={() => setIsAuthenticated(false)}>
+            <Lock color={COLORS.text} size={20} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -225,10 +339,11 @@ export default function App() {
               style={styles.primaryBtn} 
               onPress={() => {
                 setBalance(b => b - 150);
+                sendTransactionNotification(150, 'Summit Cafe');
                 setActiveModal(null);
               }}
             >
-              <Text style={styles.primaryBtnText}>Confirm Payment</Text>
+              <Text style={styles.primaryBtnText}>Confirm & Pay</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.primaryBtn, { backgroundColor: '#f1f5f9', marginTop: 10 }]} onPress={() => setActiveModal(null)}>
               <Text style={[styles.primaryBtnText, { color: COLORS.text }]}>Cancel</Text>
@@ -243,6 +358,15 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
+  // Auth Screen
+  authScreen: { flex: 1, backgroundColor: COLORS.text, justifyContent: 'center', alignItems: 'center', padding: 40 },
+  lockCircle: { width: 120, height: 120, borderRadius: 60, backgroundColor: COLORS.primary, justifyContent: 'center', alignItems: 'center', marginBottom: 40, shadowColor: COLORS.primary, shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.5, shadowRadius: 20 },
+  authTitle: { fontSize: 28, fontWeight: '800', color: 'white', marginBottom: 8 },
+  authSubtitle: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 60 },
+  biometricBtn: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: COLORS.primary, paddingHorizontal: 40, paddingVertical: 20, borderRadius: 100 },
+  biometricBtnText: { color: 'white', fontWeight: '800', fontSize: 16 },
+  footerText: { position: 'absolute', bottom: 40, color: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
+
   setupScreen: { flex: 1, backgroundColor: COLORS.surface, justifyContent: 'center', alignItems: 'center', padding: 40 },
   setupLogo: { width: 80, height: 80, backgroundColor: '#eff6ff', borderRadius: 24, justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
   setupTitle: { fontSize: 28, fontWeight: '800', color: COLORS.text, marginBottom: 8 },
@@ -257,6 +381,7 @@ const styles = StyleSheet.create({
   header: { padding: 24, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerLabel: { fontSize: 12, color: COLORS.textSoft },
   headerTitle: { fontSize: 22, fontWeight: '800', color: COLORS.text },
+  headerIcons: { flexDirection: 'row', gap: 10 },
   headerAction: { width: 44, height: 44, backgroundColor: 'white', borderRadius: 12, borderWidth: 1, borderColor: '#f1f5f9', justifyContent: 'center', alignItems: 'center' },
   
   content: { flex: 1 },

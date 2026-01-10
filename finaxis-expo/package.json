@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "expo": "~54.0.31",
+    "expo-device": "~8.0.10",
+    "expo-local-authentication": "~17.0.8",
+    "expo-notifications": "~0.32.16",
     "expo-status-bar": "~3.0.9",
     "lucide-react-native": "^0.562.0",
     "react": "19.1.0",
