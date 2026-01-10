@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FinAxis | All-In-One Event Engine</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #2563eb; 
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg: #f8fafc; 
+            --surface: #ffffff;
+            --text: #0f172a; 
+            --text-soft: #64748b;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body { margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; background: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text); overflow: hidden; }
+        
+        .mobile-container { width: 375px; height: 812px; background: var(--bg); border-radius: 40px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; overflow: hidden; border: 10px solid #1e293b; }
+        .screen { height: 100%; display: flex; flex-direction: column; }
+        .scroll-content { flex: 1; overflow-y: auto; padding-bottom: 110px; }
+
+        /* Navigation Bar */
+        .bottom-nav { position: absolute; bottom: 0; left: 0; right: 0; height: 85px; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-around; align-items: center; padding-bottom: 20px; border-top: 1px solid #f1f5f9; z-index: 50; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: var(--text-soft); font-size: 10px; font-weight: 700; transition: color 0.2s; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 22px; }
+
+        /* Header */
+        .app-header { padding: 24px 24px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .user-greeting h1 { font-size: 22px; font-weight: 800; margin: 0; }
+        .user-greeting p { font-size: 12px; color: var(--text-soft); margin: 4px 0 0; }
+
+        /* Wallet Section */
+        .wallet-card { margin: 16px 20px; padding: 24px; background: var(--text); border-radius: 28px; color: white; position: relative; overflow: hidden; }
+        .wallet-label { font-size: 12px; opacity: 0.7; font-weight: 500; }
+        .wallet-balance { font-size: 32px; font-weight: 800; margin: 8px 0; }
+        .load-pill { background: var(--primary); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+
+        /* Modules */
+        .section-header { padding: 24px 24px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .section-header h2 { font-size: 18px; font-weight: 800; margin: 0; }
+        .section-header span { font-size: 12px; color: var(--primary); font-weight: 700; }
+
+        .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 20px; }
+        .service-card { background: white; padding: 20px; border-radius: 24px; border: 1px solid #f1f5f9; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: transform 0.2s; }
+        .service-card:active { transform: scale(0.97); }
+        .service-icon { width: 44px; height: 44px; border-radius: 14px; display: flex; alignItems: center; justifyContent: center; font-size: 20px; }
+
+        /* Ticket View */
+        .ticket-view { background: white; margin: 16px 20px; border-radius: 30px; overflow: hidden; border: 1px solid #f1f5f9; }
+        .ticket-qr { padding: 30px; display: flex; justify-content: center; background: #fafafa; }
+        .ticket-details { padding: 20px; border-top: 2px dashed #f1f5f9; position: relative; }
+        .ticket-details::before, .ticket-details::after { content: ''; position: absolute; top: -11px; width: 22px; height: 22px; background: var(--bg); border-radius: 50%; }
+        .ticket-details::before { left: -12px; }
+        .ticket-details::after { right: -12px; }
+
+        /* Scanner */
+        .scanner-container { position: absolute; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .scanner-container.open { transform: translateY(0); }
+        .scanner-header { padding: 24px; display: flex; justify-content: space-between; color: white; }
+        .scan-frame-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; }
+        .scan-frame { width: 250px; height: 250px; border: 2px solid rgba(255,255,255,0.2); border-radius: 40px; position: relative; }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--primary); top: 0; left: 0; box-shadow: 0 0 15px var(--primary); animation: scanLoop 2.5s infinite linear; }
+        @keyframes scanLoop { 0% { top: 0% } 100% { top: 100% } }
+
+        /* Panel Overlay */
+        .overlay { position: absolute; inset: 0; background: rgba(15, 23, 42, 0.5); z-index: 150; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .overlay.visible { opacity: 1; pointer-events: auto; }
+        .modal-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: white; border-top-left-radius: 40px; border-top-right-radius: 40px; padding: 32px; z-index: 200; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal-sheet.open { transform: translateY(0); }
+
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { transform: scale(0.98); background: #1d4ed8; }
+
+        /* Config / Setup Screen */
+        .setup-screen { height: 100%; display: flex; flex-direction: column; padding: 32px; background: white; }
+        .setup-input { margin-bottom: 20px; }
+        .setup-input label { display: block; font-size: 12px; font-weight: 800; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; }
+        .setup-input input { width: 100%; padding: 16px; background: #f1f5f9; border: none; border-radius: 16px; font-family: inherit; font-size: 15px; }
+
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const App = () => {
+            const [isConfigured, setIsConfigured] = useState(false);
+            const [view, setView] = useState('home'); // home, wallet, tickets, discover
+            const [activeModal, setActiveModal] = useState(null); // load, scanResult, entrySuccess
+            
+            // Event Details
+            const [eventName, setEventName] = useState('Global Tech Summit 2026');
+            const [eventLoc, setEventLoc] = useState('Sandton Convention Centre');
+            const [balance, setBalance] = useState(0.00);
+            
+            // App Logic
+            const [scannedItem, setScannedItem] = useState(null);
+            const [loadAmt, setLoadAmt] = useState('');
+            const [transactions, setTransactions] = useState([]);
+
+            const dummyVendors = [
+                { id: 1, name: 'Tech Merch Store', icon: '👕', price: 350 },
+                { id: 2, name: 'Summit Cafe', icon: '☕', price: 45 },
+                { id: 3, name: 'Mainstage Lounge', icon: '🍹', price: 95 }
+            ];
+
+            const handleConfiguration = (e) => {
+                e.preventDefault();
+                setIsConfigured(true);
+            };
+
+            const simulateScan = () => {
+                setActiveModal('scanning');
+                setTimeout(() => {
+                    const item = dummyVendors[Math.floor(Math.random() * dummyVendors.length)];
+                    setScannedItem(item);
+                    setActiveModal('scanResult');
+                }, 2000);
+            };
+
+            const executePayment = () => {
+                if (balance < scannedItem.price) {
+                    alert('Insufficient funds. Load money into your wallet!');
+                    return;
+                }
+                setBalance(prev => prev - scannedItem.price);
+                setTransactions([{
+                    id: Date.now(),
+                    title: scannedItem.name,
+                    amount: -scannedItem.price,
+                    type: 'Scan to Pay',
+                    time: 'Just now'
+                }, ...transactions]);
+                setActiveModal(null);
+                setScannedItem(null);
+            };
+
+            const loadMoney = () => {
+                const amt = parseFloat(loadAmt);
+                if (amt > 0) {
+                    setBalance(prev => prev + amt);
+                    setTransactions([{
+                        id: Date.now(),
+                        title: 'Wallet Top-up',
+                        amount: amt,
+                        type: 'Deposit',
+                        time: 'Just now'
+                    }, ...transactions]);
+                    setLoadAmt('');
+                    setActiveModal(null);
+                }
+            };
+
+            // Setup / Splash Screen
+            if (!isConfigured) {
+                return (
+                    <div className="mobile-container">
+                        <div className="setup-screen">
+                            <h1 style={{fontSize: 28, fontWeight: 800, marginBottom: 8}}>EventEngine</h1>
+                            <p style={{color: 'var(--text-soft)', marginBottom: 40}}>Configure your all-in-one experience.</p>
+                            <form onSubmit={handleConfiguration}>
+                                <div className="setup-input">
+                                    <label>Event Name</label>
+                                    <input type="text" value={eventName} onChange={e => setEventName(e.target.value)} required />
+                                </div>
+                                <div className="setup-input">
+                                    <label>Location / Venue</label>
+                                    <input type="text" value={eventLoc} onChange={e => setEventLoc(e.target.value)} required />
+                                </div>
+                                <div className="setup-input">
+                                    <label>Currency</label>
+                                    <input type="text" value="ZAR" disabled />
+                                </div>
+                                <button className="btn btn-primary" style={{marginTop: 40}}>Initialize Ecosystem</button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="mobile-container">
+                    <div className="screen">
+                        
+                        {/* 🏠 HOME VIEW */}
+                        {view === 'home' && (
+                            <div className="scroll-content">
+                                <div className="app-header">
+                                    <div className="user-greeting">
+                                        <p>Ecosystem Ready</p>
+                                        <h1>Hi, Raphasha!</h1>
+                                    </div>
+                                    <div style={{width: 44, height: 44, borderRadius: 14, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 6px rgba(0,0,0,0.05)'}}>📊</div>
+                                </div>
+
+                                <div className="wallet-card">
+                                    <div className="wallet-label">Ready to Spend</div>
+                                    <div className="wallet-balance">R {balance.toLocaleString()}</div>
+                                    <div className="load-pill" onClick={() => setActiveModal('load')}>
+                                        <span>+ Load Money</span>
+                                    </div>
+                                </div>
+
+                                <div className="section-header">
+                                    <h2>Event Ecosystem</h2>
+                                    <span>{eventName}</span>
+                                </div>
+
+                                <div className="service-grid">
+                                    <div className="service-card" onClick={() => setView('tickets')}>
+                                        <div className="service-icon" style={{background: '#eff6ff', color: '#2563eb'}}>🎟️</div>
+                                        <div style={{fontWeight: 800, fontSize: 13}}>Entry Ticket</div>
+                                        <div style={{fontSize: 10, color: 'var(--text-soft)'}}>Scan at entrance</div>
+                                    </div>
+                                    <div className="service-card" onClick={() => setView('discover')}>
+                                        <div className="service-icon" style={{background: '#ecfdf5', color: '#10b981'}}>🏨</div>
+                                        <div style={{fontWeight: 800, fontSize: 13}}>Lodging</div>
+                                        <div style={{fontSize: 10, color: 'var(--text-soft)'}}>Room & Suite details</div>
+                                    </div>
+                                    <div className="service-card" onClick={simulateScan}>
+                                        <div className="service-icon" style={{background: '#fff7ed', color: '#f59e0b'}}>📸</div>
+                                        <div style={{fontWeight: 800, fontSize: 13}}>Scan to Pay</div>
+                                        <div style={{fontSize: 10, color: 'var(--text-soft)'}}>Food, merch, drinks</div>
+                                    </div>
+                                    <div className="service-card">
+                                        <div className="service-icon" style={{background: '#faf5ff', color: '#8b5cf6'}}>📅</div>
+                                        <div style={{fontWeight: 800, fontSize: 13}}>Schedule</div>
+                                        <div style={{fontSize: 10, color: 'var(--text-soft)'}}>Keynote timeline</div>
+                                    </div>
+                                </div>
+
+                                <div className="section-header">
+                                    <h2>Audit Trail</h2>
+                                    <span onClick={() => setView('wallet')}>View All</span>
+                                </div>
+                                <div style={{padding: '0 20px'}}>
+                                    {transactions.length === 0 ? (
+                                        <div style={{textAlign: 'center', padding: 40, color: '#94a3b8', fontSize: 13}}>No recent transactions</div>
+                                    ) : (
+                                        transactions.slice(0, 3).map(tx => (
+                                            <div key={tx.id} style={{display: 'flex', alignItems: 'center', gap: 16, background: 'white', padding: 14, borderRadius: 18, marginBottom: 12, border: '1px solid #f1f5f9'}}>
+                                                <div style={{fontSize: 20}}>{tx.amount > 0 ? '💰' : '💸'}</div>
+                                                <div style={{flex: 1}}>
+                                                    <div style={{fontWeight: 800, fontSize: 13}}>{tx.title}</div>
+                                                    <div style={{fontSize: 10, color: '#94a3b8'}}>{tx.type} • {tx.time}</div>
+                                                </div>
+                                                <div style={{fontWeight: 800, color: tx.amount > 0 ? '#10b981' : '#0f172a'}}>
+                                                    {tx.amount > 0 ? '+' : ''}{tx.amount}
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 🎟️ TICKETS VIEW */}
+                        {view === 'tickets' && (
+                            <div className="scroll-content">
+                                <div className="app-header">
+                                    <div onClick={() => setView('home')} style={{cursor: 'pointer'}}>← Back</div>
+                                    <h1 style={{fontSize: 18}}>My Passes</h1>
+                                    <div style={{width: 20}}></div>
+                                </div>
+                                <div className="ticket-view">
+                                    <div className="ticket-qr">
+                                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=ENTRY_PASS_RAPHASHA_2026`} width="200" alt="QR" />
+                                    </div>
+                                    <div className="ticket-details">
+                                        <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 16}}>
+                                            <div>
+                                                <div style={{fontSize: 10, opacity: 0.5, fontWeight: 700}}>NAME</div>
+                                                <div style={{fontWeight: 800, fontSize: 13}}>R. Raphasha</div>
+                                            </div>
+                                            <div style={{textAlign: 'right'}}>
+                                                <div style={{fontSize: 10, opacity: 0.5, fontWeight: 700}}>TYPE</div>
+                                                <div style={{fontWeight: 800, fontSize: 13, color: 'var(--primary)'}}>VIP TICKET</div>
+                                            </div>
+                                        </div>
+                                        <div style={{fontSize: 11, background: '#f8fafc', padding: 12, borderRadius: 12, border: '1px solid #f1f5f9'}}>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 4}}>
+                                                <span>Event</span>
+                                                <span style={{fontWeight: 700}}>{eventName}</span>
+                                            </div>
+                                            <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                <span>Entrance</span>
+                                                <span style={{fontWeight: 700}}>Gate 4 Gatekeeper</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 🏨 DISCOVER VIEW (Accommodations) */}
+                        {view === 'discover' && (
+                            <div className="scroll-content">
+                                <div className="app-header">
+                                    <div onClick={() => setView('home')} style={{cursor: 'pointer'}}>← Back</div>
+                                    <h1 style={{fontSize: 18}}>Accommodations</h1>
+                                    <div style={{width: 20}}></div>
+                                </div>
+                                <div style={{padding: '0 20px'}}>
+                                    <div style={{background: 'white', borderRadius: 28, overflow: 'hidden', border: '1px solid #f1f5f9', marginBottom: 20}}>
+                                        <div style={{height: 140, background: 'linear-gradient(to right, #6366f1, #8b5cf6)', padding: 20, display: 'flex', alignItems: 'flex-end'}}>
+                                            <h2 style={{color: 'white', margin: 0}}>Grand Horizon Hotel</h2>
+                                        </div>
+                                        <div style={{padding: 20}}>
+                                            <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 12}}>
+                                                <span style={{fontSize: 12, color: 'var(--text-soft)'}}>Suite 405 (Reserved)</span>
+                                                <span style={{color: 'var(--secondary)', fontWeight: 800, fontSize: 13}}>PAID</span>
+                                            </div>
+                                            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10}}>
+                                                <div style={{background: '#f8fafc', padding: 12, borderRadius: 16}}>
+                                                    <div style={{fontSize: 9, opacity: 0.6}}>CHECK IN</div>
+                                                    <div style={{fontWeight: 700, fontSize: 12}}>Jan 09, 14:00</div>
+                                                </div>
+                                                <div style={{background: '#f8fafc', padding: 12, borderRadius: 16}}>
+                                                    <div style={{fontSize: 9, opacity: 0.6}}>CHECK OUT</div>
+                                                    <div style={{fontWeight: 700, fontSize: 12}}>Jan 10, 11:00</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* 💰 WALLET VIEW */}
+                        {view === 'wallet' && (
+                            <div className="scroll-content">
+                                <div className="app-header">
+                                    <h1 style={{fontSize: 18}}>Event Wallet</h1>
+                                    <div style={{width: 44, height: 44, borderRadius: 14, background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #f1f5f9'}}>📜</div>
+                                </div>
+                                <div className="wallet-card" style={{marginTop: 10}}>
+                                    <div className="wallet-label">Balance in Ecosystem</div>
+                                    <div className="wallet-balance">R {balance.toLocaleString()}</div>
+                                    <div style={{display: 'flex', gap: 10}}>
+                                        <div className="load-pill" onClick={() => setActiveModal('load')}>+ Top up</div>
+                                    </div>
+                                </div>
+                                <div className="section-header"><h2>Full History</h2></div>
+                                <div style={{padding: '0 20px'}}>
+                                    {transactions.map(tx => (
+                                        <div key={tx.id} style={{display: 'flex', alignItems: 'center', gap: 16, background: 'white', padding: 14, borderRadius: 18, marginBottom: 12, border: '1px solid #f1f5f9'}}>
+                                            <div style={{fontSize: 20}}>{tx.amount > 0 ? '💰' : '💸'}</div>
+                                            <div style={{flex: 1}}>
+                                                <div style={{fontWeight: 800, fontSize: 13}}>{tx.title}</div>
+                                                <div style={{fontSize: 10, color: '#94a3b8'}}>{tx.type} • {tx.time}</div>
+                                            </div>
+                                            <div style={{fontWeight: 800, color: tx.amount > 0 ? '#10b981' : '#0f172a'}}>
+                                                {tx.amount > 0 ? '+' : ''}{tx.amount}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* BOTTOM NAV */}
+                        <div className="bottom-nav">
+                            <div className={`nav-item ${view === 'home' ? 'active' : ''}`} onClick={() => setView('home')}>
+                                <span className="nav-icon">🏠</span><span>Home</span>
+                            </div>
+                            <div className={`nav-item ${view === 'discover' ? 'active' : ''}`} onClick={() => setView('discover')}>
+                                <span className="nav-icon">🗺️</span><span>Stay</span>
+                            </div>
+                            <div className="nav-item" onClick={simulateScan}>
+                                <div style={{width: 54, height: 54, background: 'var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 24, marginTop: -40, boxShadow: '0 8px 15px rgba(37, 99, 235, 0.3)', border: '4px solid white'}}>📸</div>
+                                <span style={{marginTop: 4}}>Scan</span>
+                            </div>
+                            <div className={`nav-item ${view === 'tickets' ? 'active' : ''}`} onClick={() => setView('tickets')}>
+                                <span className="nav-icon">🎟️</span><span>Pass</span>
+                            </div>
+                            <div className={`nav-item ${view === 'wallet' ? 'active' : ''}`} onClick={() => setView('wallet')}>
+                                <span className="nav-icon">💰</span><span>Wallet</span>
+                            </div>
+                        </div>
+
+                        {/* OVERLAYS & MODALS */}
+                        <div className={`scanner-container ${activeModal === 'scanning' ? 'open' : ''}`}>
+                            <div className="scanner-header">
+                                <span onClick={() => setActiveModal(null)} style={{cursor: 'pointer'}}>Cancel</span>
+                                <span style={{fontWeight: 800}}>Scanning Shop QR...</span>
+                                <span>⚡</span>
+                            </div>
+                            <div className="scan-frame-wrapper">
+                                <div className="scan-frame"><div className="scan-line"></div></div>
+                            </div>
+                        </div>
+
+                        <div className={`overlay ${activeModal === 'load' || activeModal === 'scanResult' ? 'visible' : ''}`} onClick={() => setActiveModal(null)}></div>
+                        
+                        {/* Load Money Modal */}
+                        <div className={`modal-sheet ${activeModal === 'load' ? 'open' : ''}`}>
+                            <div style={{width: 40, height: 4, background: '#eee', borderRadius: 2, margin: '0 auto 20px'}}></div>
+                            <h2 style={{margin: 0, fontWeight: 800}}>Top Up Account</h2>
+                            <p style={{color: '#64748b', fontSize: 13, marginTop: 4, marginBottom: 24}}>Money will be loaded into the {eventName} ecosystem.</p>
+                            <label style={{fontSize: 10, fontWeight: 800, color: '#94a3b8', marginBottom: 8, display: 'block'}}>AMOUNT (ZAR)</label>
+                            <input className="btn" style={{background: '#f1f5f9', border: '1px solid #e2e8f0', textAlign: 'left', marginBottom: 20}} type="number" value={loadAmt} onChange={e => setLoadAmt(e.target.value)} placeholder="0.00" />
+                            <button className="btn btn-primary" onClick={loadMoney}>Confirm Deposit</button>
+                        </div>
+
+                        {/* Scan Result Modal */}
+                        <div className={`modal-sheet ${activeModal === 'scanResult' ? 'open' : ''}`}>
+                            <div style={{width: 40, height: 4, background: '#eee', borderRadius: 2, margin: '0 auto 20px'}}></div>
+                            <h2 style={{margin: 0, fontWeight: 800}}>Authorize Payment</h2>
+                            <p style={{color: '#64748b', fontSize: 13, marginTop: 4, marginBottom: 24}}>Instant ledger settlement for item purchase.</p>
+                            <div style={{background: '#f8fafc', padding: 20, borderRadius: 20, marginBottom: 24, border: '1px solid #f1f5f9'}}>
+                                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+                                        <div style={{fontSize: 24}}>{scannedItem?.icon}</div>
+                                        <div>
+                                            <div style={{fontWeight: 800, fontSize: 15}}>{scannedItem?.name}</div>
+                                            <div style={{fontSize: 11, color: '#94a3b8'}}>Vendor Transaction</div>
+                                        </div>
+                                    </div>
+                                    <div style={{fontWeight: 800, fontSize: 18}}>R {scannedItem?.price}</div>
+                                </div>
+                            </div>
+                            <button className="btn btn-primary" onClick={executePayment}>Confirm & Authorize</button>
+                            <button className="btn" style={{background: 'white', color: '#94a3b8', marginTop: 8}} onClick={() => setActiveModal(null)}>Cancel</button>
+                        </div>
+
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

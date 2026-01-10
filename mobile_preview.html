@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinAxis Mobile | Advanced Banking</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --primary: #2563eb; 
+            --primary-dark: #1e40af;
+            --bg: #f8fafc; 
+            --text: #0f172a; 
+            --text-muted: #64748b; 
+            --success: #10b981; 
+            --danger: #ef4444; 
+            --warning: #f59e0b;
+        }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #e2e8f0; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: var(--text); -webkit-tap-highlight-color: transparent; }
+        
+        .mobile-container { 
+            width: 375px; height: 812px; background: var(--bg); border-radius: 40px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); position: relative; 
+            overflow: hidden; border: 12px solid #1e293b; 
+        }
+
+        .screen { height: 100%; display: flex; flex-direction: column; box-sizing: border-box; }
+        .main-padding { padding: 24px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        
+        .balance-card { 
+            background: #0f172a; border-radius: 30px; padding: 28px; color: white; margin-top: 24px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
+            background-image: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        .chart-container { background: white; border-radius: 24px; padding: 20px; margin-top: 24px; border: 1px solid #f1f5f9; }
+        .bar-wrapper { display: flex; justify-content: space-between; align-items: flex-end; height: 80px; }
+        .bar { width: 26px; border-radius: 6px; background: #e2e8f0; transition: height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .bar.active { background: var(--primary); }
+
+        .quick-actions { display: flex; justify-content: space-between; margin-top: 28px; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.2s; }
+        .action-btn:active { transform: scale(0.9); }
+        .action-icon { 
+            width: 60px; height: 60px; background: white; border-radius: 20px; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-size: 24px; 
+        }
+
+        .section-title { font-weight: 800; fontSize: 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+        .tx-list { flex: 1; overflow-y: auto; padding-bottom: 100px; }
+        .tx-item { 
+            display: flex; align-items: center; gap: 16px; padding: 14px; background: white; 
+            border-radius: 20px; margin-bottom: 12px; border: 1px solid #f1f5f9; 
+        }
+        .tx-icon-circle { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+
+        /* Panels */
+        .panel { 
+            position: absolute; bottom: 0; left: 0; right: 0; background: white; 
+            border-top-left-radius: 36px; border-top-right-radius: 36px; padding: 32px; 
+            transform: translateY(105%); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 100; box-shadow: 0 -15px 30px rgba(0,0,0,0.1); 
+            box-sizing: border-box;
+        }
+        .panel.open { transform: translateY(0); }
+        .panel-overlay { 
+            position: absolute; inset: 0; background: rgba(0,0,0,0.4); 
+            z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .panel-overlay.visible { opacity: 1; pointer-events: auto; }
+
+        .btn-primary { 
+            background: var(--primary); color: white; width: 100%; padding: 18px; 
+            border-radius: 18px; font-weight: 700; border: none; cursor: pointer; 
+            font-size: 16px; transition: all 0.2s; 
+        }
+        .btn-primary:active { background: var(--primary-dark); transform: scale(0.98); }
+
+        .input-box { width: 100%; padding: 16px; background: #f1f5f9; border: 1px solid transparent; border-radius: 16px; box-sizing: border-box; font-family: inherit; font-size: 15px; outline: none; margin-bottom: 20px; transition: border-color 0.2s; }
+        .input-box:focus { border-color: var(--primary); }
+
+        /* Vault */
+        .vault-pill { background: #1e293b; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        
+        /* Notifications */
+        .noti-dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; position: absolute; top: 8px; right: 8px; border: 2px solid white; }
+        
+        .nav-bar { position: absolute; bottom: 0; left: 0; right: 0; background: white; height: 80px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #f1f5f9; padding-bottom: 20px; box-sizing: border-box; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; color: var(--text-muted); }
+        .nav-item.active { color: var(--primary); }
+
+        .auth-screen { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .pulse { width: 84px; height: 84px; background: #2563eb10; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; animation: pulse 2s infinite; font-size: 40px; }
+        @keyframes pulse { 0% { opacity: 0.5; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.5; transform: scale(0.95); } }
+
+        /* Insights */
+        .insight-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
+        .insight-bar-bg { height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .insight-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        const FinAxisApp = () => {
+            const [isLocked, setIsLocked] = useState(true);
+            const [balance, setBalance] = useState(145250.75);
+            const [vaultBalance, setVaultBalance] = useState(10000.00);
+            const [activePanel, setActivePanel] = useState(null); // 'spend', 'transfer', 'vault', 'notifications', 'insights'
+            const [notifications, setNotifications] = useState([
+                { id: 1, type: 'warning', title: 'AML Alert', desc: 'Velocity threshold reached on Account 8827', time: '10m ago' },
+                { id: 2, type: 'success', title: 'Ledger Audit', desc: 'End-of-day reconciliation completed successfully', time: '1h ago' },
+            ]);
+            const [transactions, setTransactions] = useState([
+                { id: 1, title: 'Starbucks Coffee', amount: -85.50, category: 'Food', date: 'Just now', icon: '☕' },
+                { id: 2, title: 'Salary Deposit', amount: 45000.00, category: 'Income', date: 'Yesterday', icon: '🏦' },
+                { id: 3, title: 'Global Settlement', amount: -12500.00, category: 'Bank', date: '2 days ago', icon: '💳' },
+            ]);
+            const [weeklySpending, setWeeklySpending] = useState([40, 70, 30, 90, 50, 110, 60]);
+            
+            // Logic for Spend
+            const [merchant, setMerchant] = useState('');
+            const [spendAmt, setSpendAmt] = useState('');
+
+            // Logic for Transfer
+            const [recipient, setRecipient] = useState('');
+            const [transferAmt, setTransferAmt] = useState('');
+
+            // Logic for Vault
+            const [vaultAmt, setVaultAmt] = useState('');
+
+            const handleUnlock = () => setTimeout(() => setIsLocked(false), 800);
+
+            const addTransaction = (title, amount, category, icon) => {
+                const newTx = { id: Date.now(), title, amount: -amount, category, date: 'Just now', icon };
+                setTransactions(prev => [newTx, ...prev]);
+                setBalance(prev => prev - amount);
+                
+                // Update chart
+                const newWeekly = [...weeklySpending];
+                newWeekly[6] += (amount / 100);
+                setWeeklySpending(newWeekly);
+            };
+
+            const executeSpend = () => {
+                if (!merchant || !spendAmt) return;
+                addTransaction(merchant, parseFloat(spendAmt), 'Spend', '🛍️');
+                setActivePanel(null); setMerchant(''); setSpendAmt('');
+            };
+
+            const executeTransfer = () => {
+                if (!recipient || !transferAmt) return;
+                addTransaction(`To: ${recipient}`, parseFloat(transferAmt), 'Transfer', '📤');
+                setActivePanel(null); setRecipient(''); setTransferAmt('');
+            };
+
+            const executeVault = () => {
+                const amt = parseFloat(vaultAmt);
+                if (amt <= 0 || amt > balance) return;
+                setBalance(prev => prev - amt);
+                setVaultBalance(prev => prev + amt);
+                addTransaction('Vault Deposit', amt, 'Saving', '🛡️');
+                setActivePanel(null); setVaultAmt('');
+            };
+
+            const categoryInsights = useMemo(() => {
+                const map = {};
+                transactions.filter(t => t.amount < 0).forEach(t => {
+                    const abs = Math.abs(t.amount);
+                    map[t.category] = (map[t.category] || 0) + abs;
+                });
+                return Object.entries(map).sort((a,b) => b[1] - a[1]);
+            }, [transactions]);
+
+            if (isLocked) {
+                return (
+                    <div className="mobile-container">
+                        <div className="auth-screen">
+                            <div className="pulse">🛡️</div>
+                            <h1 style={{ fontSize: 24, fontWeight: 800, margin: '0' }}>FinAxis Secure</h1>
+                            <p style={{ color: '#64748b', fontSize: 14, marginTop: 8 }}>Biometric Scan Required</p>
+                            <button onClick={handleUnlock} style={{ marginTop: 60, background: '#2563eb', color: 'white', border: 'none', padding: '18px 36px', borderRadius: 22, fontWeight: 700, cursor: 'pointer' }}>Authenticate</button>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="mobile-container">
+                    <div className="screen">
+                        {/* Header */}
+                        <div className="header main-padding">
+                            <div>
+                                <div style={{ color: '#64748b', fontSize: 12 }}>Welcome, Senior Analyst</div>
+                                <div style={{ fontWeight: 800, fontSize: 20 }}>R raphasha</div>
+                            </div>
+                            <div style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setActivePanel('notifications')}>
+                                <div style={{ padding: 10, background: 'white', borderRadius: 12, border: '1px solid #f1f5f9' }}>🔔</div>
+                                {notifications.length > 0 && <div className="noti-dot"></div>}
+                            </div>
+                        </div>
+
+                        {/* Balance Card */}
+                        <div className="main-padding" style={{paddingBottom: 0}}>
+                            <div className="balance-card">
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <div>
+                                        <div style={{ fontSize: 13, opacity: 0.7 }}>Available Balance</div>
+                                        <div style={{ fontSize: 28, fontWeight: 800, marginTop: 4 }}>R {balance.toLocaleString()}</div>
+                                    </div>
+                                    <div className="vault-pill">🛡️ R {vaultBalance.toLocaleString()}</div>
+                                </div>
+                                <div style={{ marginTop: 32, display: 'flex', justifyContent: 'space-between', opacity: 0.5, fontSize: 14 }}>
+                                    <span style={{letterSpacing: '2px'}}>**** 8827</span>
+                                    <span>VISA PLATINUM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Chart */}
+                        <div className="main-padding" style={{paddingBottom: 0}}>
+                            <div className="chart-container" onClick={() => setActivePanel('insights')} style={{cursor: 'pointer'}}>
+                                <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 12 }}>Spending Velocity</div>
+                                <div className="bar-wrapper">
+                                    {weeklySpending.map((v, i) => (
+                                        <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                                            <div className="bar" style={{ height: Math.min(Math.max(v, 6), 80), background: i === 6 ? '#2563eb' : '#e2e8f0' }}></div>
+                                            <div style={{ fontSize: 10, color: i === 6 ? '#2563eb' : '#94a3b8', fontWeight: 700 }}>{['M','T','W','T','F','S','S'][i]}</div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Quick Actions */}
+                        <div className="quick-actions main-padding">
+                            <div className="action-btn" onClick={() => setActivePanel('transfer')}>
+                                <div className="action-icon">📤</div>
+                                <span style={{ fontSize: 11, fontWeight: 700 }}>Transfer</span>
+                            </div>
+                            <div className="action-btn" onClick={() => setActivePanel('spend')}>
+                                <div className="action-icon" style={{ background: '#0f172a', color: 'white' }}>🛍️</div>
+                                <span style={{ fontSize: 11, fontWeight: 700 }}>Spend</span>
+                            </div>
+                            <div className="action-btn" onClick={() => setActivePanel('insights')}>
+                                <div className="action-icon">📊</div>
+                                <span style={{ fontSize: 11, fontWeight: 700 }}>Insights</span>
+                            </div>
+                            <div className="action-btn" onClick={() => setActivePanel('vault')}>
+                                <div className="action-icon" style={{ background: '#2563eb', color: 'white' }}>🛡️</div>
+                                <span style={{ fontSize: 11, fontWeight: 700 }}>Vault</span>
+                            </div>
+                        </div>
+
+                        {/* Transactions */}
+                        <div className="main-padding" style={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+                            <div className="section-title">
+                                <span>Ledger Audit</span>
+                                <span style={{ fontSize: 12, color: '#2563eb', fontWeight: 600 }}>See all</span>
+                            </div>
+                            <div className="tx-list">
+                                {transactions.map(tx => (
+                                    <div key={tx.id} className="tx-item">
+                                        <div className="tx-icon-circle" style={{ background: tx.amount > 0 ? '#ecfdf5' : '#f8fafc' }}>
+                                            {tx.icon}
+                                        </div>
+                                        <div style={{ flex: 1 }}>
+                                            <div style={{ fontWeight: 700, fontSize: 14 }}>{tx.title}</div>
+                                            <div style={{ fontSize: 11, color: '#94a3b8' }}>{tx.category} • {tx.date}</div>
+                                        </div>
+                                        <div style={{ fontWeight: 800, fontSize: 15, color: tx.amount > 0 ? '#10b981' : '#0f172a' }}>
+                                            {tx.amount > 0 ? '+' : ''}{tx.amount.toLocaleString()}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Nav Bar */}
+                        <div className="nav-bar">
+                            <div className="nav-item active"><span style={{fontSize: 20}}>🏠</span><span style={{fontSize: 10, fontWeight: 700}}>Home</span></div>
+                            <div className="nav-item"><span style={{fontSize: 20}}>💳</span><span style={{fontSize: 10, fontWeight: 700}}>Cards</span></div>
+                            <div className="nav-item"><span style={{fontSize: 20}}>📈</span><span style={{fontSize: 10, fontWeight: 700}}>Invest</span></div>
+                            <div className="nav-item"><span style={{fontSize: 20}}>👤</span><span style={{fontSize: 10, fontWeight: 700}}>Profile</span></div>
+                        </div>
+                    </div>
+
+                    {/* Panels */}
+                    <div className={`panel-overlay ${activePanel ? 'visible' : ''}`} onClick={() => setActivePanel(null)}></div>
+                    
+                    {/* Spending Panel */}
+                    <div className={`panel ${activePanel === 'spend' ? 'open' : ''}`}>
+                        <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 24px' }}></div>
+                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, margin: 0 }}>Instant Spend</h2>
+                        <p style={{ color: '#64748b', fontSize: 13, marginBottom: 24 }}>Authorized by Visa Platinum Core</p>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 8 }}>MERCHANT</label>
+                        <input className="input-box" type="text" placeholder="e.g. Amazon, Shell" value={merchant} onChange={e => setMerchant(e.target.value)} />
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 8 }}>AMOUNT (ZAR)</label>
+                        <input className="input-box" type="number" placeholder="0.00" value={spendAmt} onChange={e => setSpendAmt(e.target.value)} />
+                        <button className="btn-primary" onClick={executeSpend}>Authorize Payment</button>
+                    </div>
+
+                    {/* Transfer Panel */}
+                    <div className={`panel ${activePanel === 'transfer' ? 'open' : ''}`}>
+                        <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 24px' }}></div>
+                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, margin: 0 }}>Bank Transfer</h2>
+                        <p style={{ color: '#64748b', fontSize: 13, marginBottom: 24 }}>Real-time Internal Settlement</p>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 8 }}>RECIPIENT NAME</label>
+                        <input className="input-box" type="text" placeholder="Searching contacts..." value={recipient} onChange={e => setRecipient(e.target.value)} />
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 8 }}>AMOUNT (ZAR)</label>
+                        <input className="input-box" type="number" placeholder="0.00" value={transferAmt} onChange={e => setTransferAmt(e.target.value)} />
+                        <button className="btn-primary" onClick={executeTransfer}>Execute Transfer</button>
+                    </div>
+
+                    {/* Vault Panel */}
+                    <div className={`panel ${activePanel === 'vault' ? 'open' : ''}`}>
+                        <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 24px' }}></div>
+                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, margin: 0 }}>The Vault</h2>
+                        <p style={{ color: '#64748b', fontSize: 13, marginBottom: 6 }}>Current Goal: R 50,000</p>
+                        <div style={{ background: '#f1f5f9', borderRadius: 12, height: 8, marginBottom: 24 }}><div style={{ background: '#2563eb', width: '20%', height: '100%', borderRadius: 12 }}></div></div>
+                        <label style={{ fontSize: 11, fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 8 }}>DEPOSIT TO VAULT</label>
+                        <input className="input-box" type="number" placeholder="0.00" value={vaultAmt} onChange={e => setVaultAmt(e.target.value)} />
+                        <button className="btn-primary" onClick={executeVault} style={{background: '#0f172a'}}>Lock Money</button>
+                    </div>
+
+                    {/* Insights Panel */}
+                    <div className={`panel ${activePanel === 'insights' ? 'open' : ''}`}>
+                        <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 24px' }}></div>
+                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, margin: 0 }}>Category Analysis</h2>
+                        {categoryInsights.map(([cat, val]) => (
+                            <div key={cat} className="insight-row">
+                                <div style={{flex: 1}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <span style={{fontWeight: 700, fontSize: 14}}>{cat}</span>
+                                        <span style={{fontWeight: 800, fontSize: 14}}>R {val.toLocaleString()}</span>
+                                    </div>
+                                    <div className="insight-bar-bg">
+                                        <div className="insight-bar-fill" style={{ width: `${(val / (weeklySpending[6]*100 || 1)) * 100}%` }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <button className="btn-primary" onClick={() => setActivePanel(null)} style={{marginTop: 32}}>Done</button>
+                    </div>
+
+                    {/* Notifications Panel */}
+                    <div className={`panel ${activePanel === 'notifications' ? 'open' : ''}`}>
+                        <div style={{ width: 40, height: 4, background: '#e2e8f0', borderRadius: 2, margin: '0 auto 24px' }}></div>
+                        <h2 style={{ fontSize: 22, fontWeight: 800, marginBottom: 24, margin: 0 }}>Security Center</h2>
+                        {notifications.map(n => (
+                            <div key={n.id} style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
+                                <div style={{ width: 12, height: 12, borderRadius: '50%', background: n.type === 'warning' ? '#ef4444' : '#10b981', marginTop: 6 }}></div>
+                                <div>
+                                    <div style={{fontWeight: 800, fontSize: 15}}>{n.title}</div>
+                                    <div style={{fontSize: 13, color: '#64748b'}}>{n.desc}</div>
+                                    <div style={{fontSize: 11, color: '#94a3b8', marginTop: 4}}>{n.time}</div>
+                                </div>
+                            </div>
+                        ))}
+                        <button className="btn-primary" onClick={() => { setNotifications([]); setActivePanel(null); }}>Clear All</button>
+                    </div>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<FinAxisApp />);
+    </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+name: FinAxis CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: banking_db
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Build Shared Kernel
+      run: mvn clean install -pl shared-kernel -am
+
+    - name: Build and Test All Modules
+      run: mvn install
+      env:
+        SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/banking_db
+        SPRING_DATASOURCE_USERNAME: user
+        SPRING_DATASOURCE_PASSWORD: password
+        SPRING_REDIS_HOST: localhost
+
+    - name: Static Analysis (Optional Simulation)
+      run: echo "Running SonarQube analysis..."
+
+  docker_build:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build Docker Images (Simulation)
+      run: |
+        echo "Building account-ledger-service..."
+        echo "Building payment-service..."
+        # docker build -t finaxis/ledger ./account-ledger-service
