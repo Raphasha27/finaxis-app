@@ -55,4 +55,4 @@ Powerful real-time analytics for event managers:
 - `account-ledger-service/`: ACID-compliant banking core.
 - `payment-service/`: Orchestrated movement of event credits.
 
-*Created by Antigravity for Raphasha - 2026*
+*Created by Kid of Dynamics - 2026*

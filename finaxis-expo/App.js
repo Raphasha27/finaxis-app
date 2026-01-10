@@ -155,7 +155,7 @@ export default function App() {
           <Text style={styles.biometricBtnText}>Authenticate</Text>
         </TouchableOpacity>
         
-        <Text style={styles.footerText}>Secured by FinAxis Core v2.4</Text>
+        <Text style={styles.footerText}>Created by Kid of Dynamics</Text>
       </View>
     );
   }
@@ -191,6 +191,7 @@ export default function App() {
         <TouchableOpacity style={styles.primaryBtn} onPress={() => {}}>
           <Text style={styles.primaryBtnText}>Initialize Application</Text>
         </TouchableOpacity>
+        <Text style={[styles.footerText, { color: COLORS.textSoft, bottom: 20 }]}>Developed by Kid of Dynamics</Text>
       </View>
     );
   }
