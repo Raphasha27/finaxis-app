@@ -1,6 +1,10 @@
-# FinAxis: Ultimate Event Ecosystem & Premium Ledger
+# 🏦 KIROV DYNAMICS | FINAXIS BANKING PLATFORM
 
-Welcome to **FinAxis**, a high-fidelity, all-in-one Event Management Ecosystem and Distributed Banking platform. This repository showcases a dual-sided engine catering to both **Attendees** and **Event Organizers**.
+[![Kirov Dynamics](https://img.shields.io/badge/Kirov_Dynamics-AI_Infrastructure-002D62?style=for-the-badge&labelColor=0d1117)](https://github.com/Raphasha27)
+![Role](https://img.shields.io/badge/Role-AI_Infrastructure_Engineer-blue?style=for-the-badge&labelColor=0d1117)
+
+Welcome to **FinAxis**, a high-fidelity, all-in-one Event Management Ecosystem and Distributed Banking platform. This repository showcases a dual-sided engine catering to both **Attendees** and **Event Organizers**, demonstrating elite **AI Infrastructure Engineering**.
+
 
 ## 🚀 Live Demonstration (Web Preview)
 The mobile-first web ecosystem is currently live and optimized for performance:
