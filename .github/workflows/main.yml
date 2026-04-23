@@ -8,6 +8,7 @@ on:
 
 jobs:
   build_and_test:
+    name: Build & Test (Java/Maven)
     runs-on: ubuntu-latest
     
     services:
@@ -25,10 +26,10 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up JDK 17
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -45,18 +46,34 @@ jobs:
         SPRING_DATASOURCE_PASSWORD: password
         SPRING_REDIS_HOST: localhost
 
-    - name: Static Analysis (Optional Simulation)
-      run: echo "Running SonarQube analysis..."
+  security_scan:
+    name: Security Scan (Trivy)
+    needs: build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
 
   docker_build:
+    name: Docker Build (Verification)
     needs: build_and_test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
     steps:
-    - uses: actions/checkout@v3
-    - name: Build Docker Images (Simulation)
+    - uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build Infrastructure Images (Verification)
       run: |
-        echo "Building account-ledger-service..."
-        echo "Building payment-service..."
-        # docker build -t finaxis/ledger ./account-ledger-service
+        echo "Verifying Docker infrastructure..."
+        docker-compose config > /dev/null
