@@ -10,7 +10,8 @@ on:
 jobs:
   build_and_test: 
     name: Build & Test (Java/Maven)
-    runs-on: postgres: image:
+    runs-on: postgres:
+    image:
     postgres:15-alpine
         env: 
     POSTGRES_DB: banking_db
@@ -18,7 +19,8 @@ jobs:
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
-      redis: image:
+      redis: 
+    image:
     redis:7-alpine
         ports:
           - 6379:6379
@@ -37,7 +39,8 @@ jobs:
 
     - name: Build and Test All Modules
       run: mvn install
-      env: SPRING_DATASOURCE_URL:
+      env: 
+    SPRING_DATASOURCE_URL:
     jdbc:postgresql://localhost:5432/banking_db
         SPRING_DATASOURCE_USERNAME: user
         SPRING_DATASOURCE_PASSWORD: password
@@ -46,7 +49,8 @@ jobs:
   security_scan: 
     name: Security Scan (Trivy)
     needs: build_and_test
-    runs-on: - uses: actions/checkout@v4
+    runs-on: -
+    uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
