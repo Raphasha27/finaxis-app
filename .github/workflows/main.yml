@@ -1,6 +1,8 @@
 name: FinAxis CI/CD Pipeline
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [ master, develop ]
   pull_request:
@@ -9,7 +11,9 @@ on:
 jobs:
   build_and_test:
     name: Build & Test (Java/Maven)
-    runs-on: ubuntu-latest
+    runs-on:
+  workflow_dispatch:
+ ubuntu-latest
     
     services:
       postgres:
@@ -31,8 +35,12 @@ jobs:
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
+        java-version:
+  workflow_dispatch:
+ '17'
+        distribution:
+  workflow_dispatch:
+ 'temurin'
         cache: maven
 
     - name: Build Shared Kernel
@@ -49,7 +57,9 @@ jobs:
   security_scan:
     name: Security Scan (Trivy)
     needs: build_and_test
-    runs-on: ubuntu-latest
+    runs-on:
+  workflow_dispatch:
+ ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
@@ -64,7 +74,9 @@ jobs:
   docker_build:
     name: Docker Build (Verification)
     needs: build_and_test
-    runs-on: ubuntu-latest
+    runs-on:
+  workflow_dispatch:
+ ubuntu-latest
     if: github.ref == 'refs/heads/master'
     
     steps:
@@ -77,3 +89,4 @@ jobs:
       run: |
         echo "Verifying Docker infrastructure..."
         docker-compose config > /dev/null
+
