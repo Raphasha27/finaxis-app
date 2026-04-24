@@ -10,7 +10,7 @@ on:
 jobs:
   build_and_test: 
     name: Build & Test (Java/Maven)
-    runs-on: postgres:
+    runs-on: ubuntu-latest
     image:
     postgres:15-alpine
         env: 
@@ -49,8 +49,9 @@ jobs:
   security_scan: 
     name: Security Scan (Trivy)
     needs: build_and_test
-    runs-on: -
-    uses: actions/checkout@v4
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
@@ -63,7 +64,7 @@ jobs:
   docker_build: 
     name: Docker Build (Verification)
     needs: build_and_test
-    runs-on: steps:
+    runs-on: ubuntu-latest
     - uses: actions/checkout@v4
 
     - name: Set up Docker Buildx
