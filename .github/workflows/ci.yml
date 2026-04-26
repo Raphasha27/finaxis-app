@@ -1,4 +1,5 @@
-name: CI
+name: Java CI (Kirov Dynamics)
+
 on:
   workflow_dispatch:
   push:
@@ -8,7 +9,6 @@ on:
 
 jobs:
   build:
-    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,7 +17,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: maven
+          cache: 'maven'
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
