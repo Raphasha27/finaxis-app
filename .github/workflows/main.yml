@@ -11,8 +11,7 @@ jobs:
   build_and_test: 
     name: Build & Test (Java/Maven)
     runs-on: ubuntu-latest
-    image:
-    postgres:15-alpine
+    image: postgres:15-alpine
         env: 
     POSTGRES_DB: banking_db
           POSTGRES_USER: user
@@ -20,8 +19,7 @@ jobs:
         ports:
           - 5432:5432
       redis: 
-    image:
-    redis:7-alpine
+    image: redis:7-alpine
         ports:
           - 6379:6379
 
@@ -29,17 +27,17 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
+        uses: actions/setup-java@v4
+        with:
         java-version:
-   cache: maven
+          cache: maven
 
       - name: Build Shared Kernel
-      run: mvn clean install -pl shared-kernel -am
+        run: mvn clean install -pl shared-kernel -am
 
       - name: Build and Test All Modules
-      run: mvn install
-      env: 
+        run: mvn install
+        env:
     SPRING_DATASOURCE_URL:
     jdbc:postgresql://localhost:5432/banking_db
         SPRING_DATASOURCE_USERNAME: user
@@ -69,9 +67,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3
 
       - name: Build Infrastructure Images (Verification)
-      run: |
+        run: |
         echo "Verifying Docker infrastructure..."
         docker-compose config > /dev/null
