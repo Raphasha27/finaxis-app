@@ -76,11 +76,8 @@ public class LedgerConcurrencyTest {
         );
 
         // Assert balances
-        UUID sId = senderId;
-        UUID rId = receiverId;
-        if (sId == null || rId == null) throw new IllegalStateException();
-        Account sender = accountRepository.findById(sId).orElseThrow();
-        Account receiver = accountRepository.findById(rId).orElseThrow();
+        Account sender = accountRepository.findById(Objects.requireNonNull(senderId)).orElseThrow();
+        Account receiver = accountRepository.findById(Objects.requireNonNull(receiverId)).orElseThrow();
 
         assertEquals(new BigDecimal("750.0000"), sender.getBalance());
         assertEquals(new BigDecimal("250.0000"), receiver.getBalance());
