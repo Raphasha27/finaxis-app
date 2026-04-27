@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --background: #0a0a0a;
@@ -9,8 +7,8 @@
 
 @layer base {
   body {
-    @apply bg-black text-white antialiased selection:bg-blue-500/30;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: #05070A;
+    color: white;
   }
 }
 
@@ -24,12 +22,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #262626;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* Glassmorphism utility */
