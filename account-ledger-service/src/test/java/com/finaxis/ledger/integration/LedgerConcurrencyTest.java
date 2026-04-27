@@ -14,6 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.util.UUID;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -43,23 +44,27 @@ public class LedgerConcurrencyTest {
         UUID senderId = UUID.randomUUID();
         UUID receiverId = UUID.randomUUID();
 
-        accountRepository.save(Account.builder()
+        Account sAcc = Account.builder()
                 .id(senderId)
                 .accountNumber("SENDER-001")
                 .balance(new BigDecimal("1000.00"))
                 .currency("ZAR")
                 .status(Account.AccountStatus.ACTIVE)
                 .customerId(UUID.randomUUID())
-                .build());
+                .build();
+        Objects.requireNonNull(sAcc);
+        accountRepository.save(sAcc);
 
-        accountRepository.save(Account.builder()
+        Account rAcc = Account.builder()
                 .id(receiverId)
                 .accountNumber("RECEIVER-001")
                 .balance(new BigDecimal("0.00"))
                 .currency("ZAR")
                 .status(Account.AccountStatus.ACTIVE)
                 .customerId(UUID.randomUUID())
-                .build());
+                .build();
+        Objects.requireNonNull(rAcc);
+        accountRepository.save(rAcc);
 
         // Perform Transfer
         postingService.postTransaction(
@@ -71,8 +76,11 @@ public class LedgerConcurrencyTest {
         );
 
         // Assert balances
-        Account sender = accountRepository.findById(senderId).orElseThrow();
-        Account receiver = accountRepository.findById(receiverId).orElseThrow();
+        UUID sId = senderId;
+        UUID rId = receiverId;
+        if (sId == null || rId == null) throw new IllegalStateException();
+        Account sender = accountRepository.findById(sId).orElseThrow();
+        Account receiver = accountRepository.findById(rId).orElseThrow();
 
         assertEquals(new BigDecimal("750.0000"), sender.getBalance());
         assertEquals(new BigDecimal("250.0000"), receiver.getBalance());

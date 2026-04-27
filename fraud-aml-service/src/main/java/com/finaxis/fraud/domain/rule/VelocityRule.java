@@ -26,7 +26,9 @@ public class VelocityRule implements FraudRule {
         redisTemplate.opsForValue().increment(key);
         if (count == 0) {
             Duration timeout = Duration.ofMinutes(1);
-            redisTemplate.expire(key, timeout);
+            if (timeout != null) {
+                redisTemplate.expire(key, timeout);
+            }
         }
         return false;
     }
