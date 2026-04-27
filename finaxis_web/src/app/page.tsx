@@ -56,16 +56,17 @@ const GlassCard = ({ children, className = "", onClick }: { children: React.Reac
 // --- Page Animation Variants ---
 const pageVariants = {
   initial: { opacity: 0, y: 20, scale: 0.98 },
-  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.1 } },
-  exit: { opacity: 0, y: -20, scale: 0.98, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }
+  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, staggerChildren: 0.1 } },
+  exit: { opacity: 0, y: -20, scale: 0.98, transition: { duration: 0.3 } }
 };
 
 const itemVariants = {
   initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+  animate: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
 export default function FinAxisWeb() {
+  const [mounted, setMounted] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [role, setRole] = useState<"ATTENDEE" | "ORGANIZER" | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "wallet" | "analytics" | "ai">("home");
@@ -93,6 +94,7 @@ export default function FinAxisWeb() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    setMounted(true);
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({ x: e.clientX, y: e.clientY });
     };
@@ -154,6 +156,8 @@ export default function FinAxisWeb() {
       }, 500);
     }, 1000);
   };
+
+  if (!mounted) return null; // Bypass SSR for framer-motion compatibility
 
   // --- Screens ---
 
