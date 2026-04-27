@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinAxis | Kirov Dynamics Enterprise Ecosystem</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #1D4ED8;
+            --bg: #05070A;
+            --surface: #0F172A;
+            --glass: rgba(15, 23, 42, 0.7);
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #ffffff; }
+        h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; }
+        .glass { background: var(--glass); backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .neon-blue { box-shadow: 0 0 40px -10px rgba(37, 99, 235, 0.4); }
+        .nav-active { color: var(--primary); }
+        .page-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab-content { display: none; opacity: 0; transform: translateY(10px); }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        
+        /* App Container for Mobile */
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <div class="app-container flex flex-col">
+        <!-- Animated Background -->
+        <div class="fixed inset-0 pointer-events-none -z-10">
+            <div class="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-900/10 rounded-full blur-[100px]"></div>
+        </div>
+
+        <!-- AUTH SCREEN -->
+        <div id="page-auth" class="flex-1 flex flex-col items-center justify-center p-8 text-center page-transition">
+            <div class="mb-12">
+                <svg width="120" height="120" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" class="neon-blue rounded-[32px]">
+                    <rect width="512" height="512" rx="120" fill="#0F172A"/>
+                    <path d="M120 160C120 137.909 137.909 120 160 120H352C374.091 120 392 137.909 392 160V352C392 374.091 374.091 392 352 392H160C137.909 392 120 374.091 120 352V160Z" fill="url(#p0)"/>
+                    <path d="M180 220L256 160L332 220V320L256 360L180 320V220Z" fill="white" fill-opacity="0.1"/>
+                    <path d="M256 180V300M210 210L256 180L302 210M210 270L256 300L302 270" stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="256" cy="240" r="40" stroke="white" stroke-width="12" stroke-dasharray="20 10"/>
+                    <defs><linearGradient id="p0" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse"><stop stop-color="#2563EB"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+                </svg>
+            </div>
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">FinAxis</h1>
+            <p class="text-slate-500 font-medium mb-12">Next-Gen Financial Ecosystem</p>
+            
+            <button onclick="navigateTo('page-role')" class="w-full max-w-xs flex items-center justify-center gap-4 bg-blue-600 hover:bg-blue-500 py-5 rounded-[24px] transition-all active:scale-95 shadow-xl shadow-blue-600/20 font-bold text-lg">
+                <i data-lucide="fingerprint" class="w-6 h-6"></i>
+                Unlock Terminal
+            </button>
+            <p class="mt-8 text-[10px] uppercase tracking-[0.4em] text-slate-700 font-bold">24H Autonomous Service</p>
+        </div>
+
+        <!-- ROLE SELECTION -->
+        <div id="page-role" class="hidden flex-1 flex flex-col items-center justify-center p-8 page-transition">
+            <h2 class="text-3xl font-bold mb-2">Initialize Hub</h2>
+            <p class="text-slate-500 mb-12">Select your enterprise operational role</p>
+            
+            <div class="w-full space-y-4">
+                <button onclick="selectRole('ATTENDEE')" class="w-full glass p-8 rounded-[32px] flex flex-col items-center gap-4 hover:border-blue-500/50 transition-all active:scale-[0.98]">
+                    <div class="p-4 bg-blue-600/10 rounded-2xl">
+                        <i data-lucide="user" class="text-blue-500 w-8 h-8"></i>
+                    </div>
+                    <span class="font-bold text-xl">Attendee Terminal</span>
+                    <p class="text-xs text-slate-500">Payments, AI Butler & Event Access</p>
+                </button>
+
+                <button onclick="selectRole('ORGANIZER')" class="w-full glass p-8 rounded-[32px] flex flex-col items-center gap-4 hover:border-blue-500/50 transition-all active:scale-[0.98]">
+                    <div class="p-4 bg-blue-600/10 rounded-2xl">
+                        <i data-lucide="layout-dashboard" class="text-blue-500 w-8 h-8"></i>
+                    </div>
+                    <span class="font-bold text-xl">Organizer Hub</span>
+                    <p class="text-xs text-slate-500">Real-time Analytics & Vendor Monitor</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- MAIN APP -->
+        <div id="page-main" class="hidden flex-1 flex flex-col h-screen">
+            <!-- Top Header -->
+            <header class="p-6 flex justify-between items-center sticky top-0 bg-bg/80 backdrop-blur-xl z-50">
+                <div class="flex items-center gap-3">
+                    <svg width="32" height="32" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="512" height="512" rx="120" fill="#0F172A"/>
+                        <path d="M120 160H352V352H160V160Z" fill="url(#p1)" opacity="0.8"/>
+                        <defs><linearGradient id="p1" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse"><stop stop-color="#2563EB"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+                    </svg>
+                    <span class="font-extrabold text-lg">FinAxis</span>
+                </div>
+                <div class="flex gap-2">
+                    <button class="p-2.5 glass rounded-xl text-slate-400"><i data-lucide="bell" class="w-5 h-5"></i></button>
+                    <button onclick="navigateTo('page-auth')" class="p-2.5 glass rounded-xl text-slate-400"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                </div>
+            </header>
+
+            <!-- Scrollable Content -->
+            <main class="flex-1 overflow-y-auto px-6 pb-32">
+                <!-- HOME TAB -->
+                <div id="tab-home" class="tab-content active space-y-8 py-4">
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <p class="text-slate-500 text-sm">Welcome back,</p>
+                            <h3 class="text-2xl font-bold">Raphasha!</h3>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase font-bold text-blue-500 bg-blue-500/10 px-2 py-1 rounded-md">Master Node</p>
+                        </div>
+                    </div>
+
+                    <!-- Hero Event Pass -->
+                    <div class="glass p-6 rounded-[32px] relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="ticket" class="w-24 h-24"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-1">Kirov Innovation Summit</h4>
+                        <p class="text-slate-500 text-xs mb-8 flex items-center gap-1"><i data-lucide="map-pin" class="w-3 h-3"></i> Sandton Convention Centre</p>
+                        
+                        <div class="flex items-center justify-between mt-auto">
+                            <div class="flex -space-x-2">
+                                <div class="w-8 h-8 rounded-full border-2 border-surface bg-slate-800"></div>
+                                <div class="w-8 h-8 rounded-full border-2 border-surface bg-slate-700"></div>
+                                <div class="w-8 h-8 rounded-full border-2 border-surface bg-slate-600 flex items-center justify-center text-[8px] font-bold">+1.2k</div>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-2xl text-sm font-bold shadow-lg transition-all">Scan Access</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Tools -->
+                    <div class="grid grid-cols-4 gap-4">
+                        <button onclick="switchTab('tab-ai')" class="flex flex-col items-center gap-2">
+                            <div class="w-full aspect-square glass rounded-2xl flex items-center justify-center text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                <i data-lucide="bot" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">AI Help</span>
+                        </button>
+                        <button onclick="openPayModal()" class="flex flex-col items-center gap-2">
+                            <div class="w-full aspect-square glass rounded-2xl flex items-center justify-center text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                <i data-lucide="scan" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Pay</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-2">
+                            <div class="w-full aspect-square glass rounded-2xl flex items-center justify-center text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                <i data-lucide="navigation-2" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Directions</span>
+                        </button>
+                        <button class="flex flex-col items-center gap-2">
+                            <div class="w-full aspect-square glass rounded-2xl flex items-center justify-center text-blue-500 hover:bg-blue-500/10 transition-colors">
+                                <i data-lucide="settings" class="w-6 h-6"></i>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">Settings</span>
+                        </button>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="space-y-4">
+                        <h4 class="font-bold text-lg px-2">Live Insights</h4>
+                        <div class="glass p-5 rounded-[28px] border-l-4 border-blue-600">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-blue-600/10 rounded-2xl flex items-center justify-center"><i data-lucide="zap" class="text-blue-500 w-5 h-5"></i></div>
+                                <div>
+                                    <p class="font-bold text-sm">System Healthy</p>
+                                    <p class="text-xs text-slate-500">Autonomous processing at 99.8% efficiency.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WALLET TAB -->
+                <div id="tab-wallet" class="tab-content space-y-8 py-4">
+                    <h3 class="text-2xl font-bold">Enterprise Ledger</h3>
+                    
+                    <!-- Balance Card -->
+                    <div class="bg-gradient-to-br from-blue-600 to-blue-900 p-8 rounded-[32px] text-white relative overflow-hidden shadow-2xl shadow-blue-600/30">
+                        <div class="absolute -bottom-4 -right-4 opacity-10">
+                            <i data-lucide="shield" class="w-40 h-40"></i>
+                        </div>
+                        <p class="text-white/60 text-xs font-bold uppercase tracking-widest mb-1">Total Liquidity</p>
+                        <h4 class="text-4xl font-extrabold mb-8">R 24,500.00</h4>
+                        <div class="flex gap-4">
+                            <button class="flex-1 bg-white text-blue-600 py-3.5 rounded-2xl font-bold text-sm">Top Up</button>
+                            <button class="flex-1 bg-white/10 text-white border border-white/20 py-3.5 rounded-2xl font-bold text-sm">Withdraw</button>
+                        </div>
+                    </div>
+
+                    <!-- Transactions -->
+                    <div class="space-y-4">
+                        <div class="flex justify-between px-2">
+                            <h4 class="font-bold">Recent History</h4>
+                            <button class="text-blue-500 text-xs font-bold">View Ledger</button>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="glass p-4 rounded-3xl flex justify-between items-center">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400"><i data-lucide="coffee" class="w-4 h-4"></i></div>
+                                    <div><p class="font-bold text-sm">Kirov Cafe</p><p class="text-[10px] text-slate-500">Infrastructure Node #12</p></div>
+                                </div>
+                                <div class="text-right"><p class="font-bold text-rose-500">-R 65.00</p><p class="text-[8px] text-slate-600 uppercase">Success</p></div>
+                            </div>
+                            <div class="glass p-4 rounded-3xl flex justify-between items-center">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center text-slate-400"><i data-lucide="arrow-down-left" class="w-4 h-4 text-emerald-500"></i></div>
+                                    <div><p class="font-bold text-sm">Institution Load</p><p class="text-[10px] text-slate-500">Bank Transfer Sync</p></div>
+                                </div>
+                                <div class="text-right"><p class="font-bold text-emerald-500">+R 5,000.00</p><p class="text-[8px] text-slate-600 uppercase">Confirmed</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ANALYTICS TAB -->
+                <div id="tab-analytics" class="tab-content space-y-8 py-4">
+                    <h3 class="text-2xl font-bold">Organizer Insights</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass p-6 rounded-[28px]">
+                            <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">Gross Rev</p>
+                            <p class="text-xl font-extrabold">R 1.2M</p>
+                            <p class="text-emerald-500 text-[8px] font-bold">+15% ↑</p>
+                        </div>
+                        <div class="glass p-6 rounded-[28px]">
+                            <p class="text-slate-500 text-[10px] font-bold uppercase mb-1">Active Users</p>
+                            <p class="text-xl font-extrabold">2.4k</p>
+                            <p class="text-blue-500 text-[8px] font-bold">Real-time</p>
+                        </div>
+                    </div>
+
+                    <div class="glass p-6 rounded-[32px] h-48 flex flex-col">
+                        <h4 class="font-bold mb-4">Crowd Density Hourly</h4>
+                        <div class="flex-1 flex items-end gap-2 px-1">
+                            <div class="flex-1 bg-blue-600/30 rounded-t-lg h-1/2"></div>
+                            <div class="flex-1 bg-blue-600/30 rounded-t-lg h-3/4"></div>
+                            <div class="flex-1 bg-blue-600/30 rounded-t-lg h-1/3"></div>
+                            <div class="flex-1 bg-blue-600/30 rounded-t-lg h-full"></div>
+                            <div class="flex-1 bg-blue-600/30 rounded-t-lg h-2/3"></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <h4 class="font-bold px-2 text-rose-500 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i> Anomalies</h4>
+                        <div class="bg-rose-500/5 border border-rose-500/10 p-4 rounded-3xl">
+                            <p class="text-xs font-bold text-rose-500">Unusual surge at Gate 4</p>
+                            <p class="text-[10px] text-slate-500 mt-1">Recommend autonomous traffic redirect via AI Butler.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI BUTLER TAB -->
+                <div id="tab-ai" class="tab-content space-y-6 py-4">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="p-3 bg-blue-600 rounded-2xl shadow-lg shadow-blue-600/40"><i data-lucide="bot" class="text-white w-6 h-6"></i></div>
+                        <div><h3 class="text-xl font-bold">AI Hub</h3><p class="text-xs text-slate-500">24/7 Autonomous Assistant</p></div>
+                    </div>
+
+                    <div class="space-y-4 h-[400px] overflow-y-auto pr-2" id="chat-box">
+                        <div class="bg-slate-800/50 p-4 rounded-2xl rounded-bl-none max-w-[80%]">
+                            <p class="text-sm">Hi Raphasha! I've analyzed your schedule. Your next session, "Future of Kirov Banking," starts in 15 minutes. Would you like directions or to pre-order a coffee?</p>
+                        </div>
+                        <div class="bg-blue-600 p-4 rounded-2xl rounded-br-none max-w-[80%] self-end ml-auto">
+                            <p class="text-sm">Order coffee, please.</p>
+                        </div>
+                        <div class="bg-slate-800/50 p-4 rounded-2xl rounded-bl-none max-w-[80%]">
+                            <p class="text-sm">Processing... ☕ Transaction of R 45.00 authorized. Your order will be ready at Node #12 in 5 minutes. Routing navigation now.</p>
+                        </div>
+                    </div>
+
+                    <div class="relative mt-auto pt-4">
+                        <input type="text" placeholder="Ask anything..." class="w-full glass bg-slate-900/50 p-4 rounded-2xl pr-12 focus:outline-none focus:border-blue-500/50 text-sm">
+                        <button class="absolute right-3 top-[30px] text-blue-500"><i data-lucide="send" class="w-5 h-5"></i></button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Bottom Navigation Bar -->
+            <nav class="fixed bottom-6 left-6 right-6 z-50">
+                <div class="glass max-w-sm mx-auto rounded-[32px] p-3 flex justify-between items-center shadow-2xl">
+                    <button onclick="switchTab('tab-home')" class="nav-btn p-4 rounded-2xl text-blue-500 bg-blue-500/10 transition-all"><i data-lucide="home" class="w-6 h-6"></i></button>
+                    <button onclick="switchTab('tab-wallet')" class="nav-btn p-4 rounded-2xl text-slate-500 transition-all"><i data-lucide="wallet" class="w-6 h-6"></i></button>
+                    <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center -mt-12 shadow-lg shadow-blue-600/40 active:scale-90 transition-transform cursor-pointer border-4 border-bg" onclick="openPayModal()">
+                        <i data-lucide="scan" class="text-white w-6 h-6"></i>
+                    </div>
+                    <button onclick="switchTab('tab-analytics')" class="nav-btn p-4 rounded-2xl text-slate-500 transition-all"><i data-lucide="bar-chart-3" class="w-6 h-6"></i></button>
+                    <button onclick="switchTab('tab-ai')" class="nav-btn p-4 rounded-2xl text-slate-500 transition-all"><i data-lucide="bot" class="w-6 h-6"></i></button>
+                </div>
+            </nav>
+        </div>
+
+        <!-- PAYMENT MODAL -->
+        <div id="modal-pay" class="hidden fixed inset-0 z-[100] flex flex-col justify-end">
+            <div onclick="closePayModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+            <div class="relative bg-[#0F172A] rounded-t-[40px] p-10 border-t border-white/10 translate-y-full transition-transform duration-500" id="modal-sheet">
+                <div class="w-12 h-1 bg-slate-800 rounded-full mx-auto mb-10"></div>
+                <h3 class="text-2xl font-bold mb-2">Authorize Payment</h3>
+                <p class="text-slate-500 text-sm mb-10">Institutional ledger confirmation via Kirov Secure Node.</p>
+                
+                <div class="glass p-6 rounded-3xl mb-10 flex justify-between items-center">
+                    <div><p class="font-bold">Transaction Value</p><p class="text-xs text-slate-500">Encrypted AES-256</p></div>
+                    <p class="text-3xl font-extrabold text-blue-500">R 0.00</p>
+                </div>
+
+                <div class="bg-blue-600/10 border border-blue-500/20 p-4 rounded-2xl mb-8 text-center text-[10px] font-bold text-blue-500 uppercase tracking-widest">
+                    Demo Mode: Payments are simulated for Pitching
+                </div>
+
+                <button onclick="closePayModal()" class="w-full bg-blue-600 py-5 rounded-[24px] font-bold text-lg hover:bg-blue-500 active:scale-95 transition-all shadow-xl shadow-blue-600/30">Confirm & Process</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-transition').forEach(p => p.classList.add('hidden'));
+            document.getElementById('page-main').classList.add('hidden');
+            document.getElementById('page-auth').classList.add('hidden');
+            document.getElementById('page-role').classList.add('hidden');
+            
+            document.getElementById(pageId).classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function selectRole(role) {
+            navigateTo('page-main');
+            const hubLabel = document.getElementById('role-label');
+            const analyticsBtn = document.querySelector('button[onclick="switchTab(\'tab-analytics\')"]');
+            
+            if (role === 'ATTENDEE') {
+                hubLabel.innerText = 'Attendee Terminal';
+                analyticsBtn.parentElement.style.opacity = '0.3';
+                analyticsBtn.disabled = true;
+            } else {
+                hubLabel.innerText = 'Organizer Hub';
+                analyticsBtn.parentElement.style.opacity = '1';
+                analyticsBtn.disabled = false;
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            // Update Nav Styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-blue-500', 'bg-blue-500/10');
+                btn.classList.add('text-slate-500');
+            });
+            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+            activeBtn.classList.add('text-blue-500', 'bg-blue-500/10');
+            activeBtn.classList.remove('text-slate-500');
+            
+            lucide.createIcons();
+        }
+
+        function openPayModal() {
+            const modal = document.getElementById('modal-pay');
+            const sheet = document.getElementById('modal-sheet');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                sheet.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        function closePayModal() {
+            const sheet = document.getElementById('modal-sheet');
+            sheet.style.transform = 'translateY(100%)';
+            setTimeout(() => {
+                document.getElementById('modal-pay').classList.add('hidden');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
