@@ -456,8 +456,8 @@ export default function FinAxisWeb() {
       {/* --- Tab Navigation --- */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-6">
         <div className="bg-[#0F172A]/90 backdrop-blur-xl border border-white/10 rounded-[40px] p-4 flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
-            <button onClick={() => switchTab('home')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'home' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Home className="w-6 h-6" /></button>
-            <button onClick={() => switchTab('wallet')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'wallet' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Wallet className="w-6 h-6" /></button>
+            <button onClick={() => setActiveTab('home')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'home' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Home className="w-6 h-6" /></button>
+            <button onClick={() => setActiveTab('wallet')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'wallet' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Wallet className="w-6 h-6" /></button>
             
             <div className="relative -top-8">
                 <div className="absolute inset-0 bg-blue-600 blur-xl opacity-50 rounded-full"></div>
@@ -467,9 +467,9 @@ export default function FinAxisWeb() {
             </div>
             
             {role === "ORGANIZER" && (
-                <button onClick={() => switchTab('analytics')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'analytics' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><BarChart3 className="w-6 h-6" /></button>
+                <button onClick={() => setActiveTab('analytics')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'analytics' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><BarChart3 className="w-6 h-6" /></button>
             )}
-            <button onClick={() => switchTab('ai')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'ai' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Bot className="w-6 h-6" /></button>
+            <button onClick={() => setActiveTab('ai')} className={`p-4 rounded-2xl transition-colors ${activeTab === 'ai' ? 'text-blue-500 bg-blue-500/10' : 'text-slate-500 hover:text-white'}`}><Bot className="w-6 h-6" /></button>
         </div>
       </nav>
 
