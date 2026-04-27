@@ -22,6 +22,11 @@
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.2.0</spring-boot.version>
+        <!-- Pinned transitive deps to avoid partial-download cache poisoning -->
+        <zstd-jni.version>1.5.5-4</zstd-jni.version>
+        <testcontainers.version>1.19.3</testcontainers.version>
+        <scala.version>2.13.12</scala.version>
+        <scala-collection-compat.version>2.11.0</scala-collection-compat.version>
     </properties>
 
     <dependencyManagement>
@@ -32,6 +37,31 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Testcontainers BOM — pins all org.testcontainers:* at once -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Pin zstd-jni to a release that fully downloads (1.5.5-1 was corrupt) -->
+            <dependency>
+                <groupId>com.github.luben</groupId>
+                <artifactId>zstd-jni</artifactId>
+                <version>${zstd-jni.version}</version>
+            </dependency>
+            <!-- Pin Scala transitive deps pulled in by kafka-streams -->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${scala.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang.modules</groupId>
+                <artifactId>scala-collection-compat_2.13</artifactId>
+                <version>${scala-collection-compat.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
