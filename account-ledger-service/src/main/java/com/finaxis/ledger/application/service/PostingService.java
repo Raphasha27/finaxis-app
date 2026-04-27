@@ -33,9 +33,13 @@ public class PostingService {
                                             UUID debitAccountId, UUID creditAccountId, BigDecimal amount) {
         
         // 2. Fetch Accounts
-        Account debitAccount = accountRepository.findById(debitAccountId)
+        UUID dId = debitAccountId;
+        UUID cId = creditAccountId;
+        if (dId == null || cId == null) throw new IllegalArgumentException("Account IDs cannot be null");
+
+        Account debitAccount = accountRepository.findById(dId)
                 .orElseThrow(() -> new RuntimeException("Debit account not found"));
-        Account creditAccount = accountRepository.findById(creditAccountId)
+        Account creditAccount = accountRepository.findById(cId)
                 .orElseThrow(() -> new RuntimeException("Credit account not found"));
 
         // 3. Logic: Update Balances
