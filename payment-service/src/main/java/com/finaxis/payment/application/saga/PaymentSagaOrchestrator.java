@@ -3,7 +3,6 @@ package com.finaxis.payment.application.saga;
 import com.finaxis.shared.event.PaymentInitiatedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,6 +41,7 @@ public class PaymentSagaOrchestrator {
                     .createdAt(java.time.OffsetDateTime.now())
                     .build();
 
+            if (outboxEntry == null) throw new IllegalStateException("Outbox event creation failed");
             outboxRepository.save(outboxEntry);
             log.info("Payment event saved to Outbox. Worker will pick it up.");
         } catch (Exception e) {

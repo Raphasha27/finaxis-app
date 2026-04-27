@@ -2,7 +2,6 @@ package com.finaxis.ledger.infrastructure.web;
 
 import com.finaxis.ledger.application.service.PostingService;
 import com.finaxis.ledger.domain.model.LedgerTransaction;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -29,7 +29,11 @@ public class OutboxWorker {
         for (OutboxEvent event : events) {
             try {
                 // In a real system, we'd map eventType to a specific Kafka topic
-                kafkaTemplate.send("payment-events", event.getAggregateId(), event.getPayload());
+                String aggregateId = event.getAggregateId();
+                String payload = event.getPayload();
+                if (aggregateId != null && payload != null) {
+                    kafkaTemplate.send("payment-events", aggregateId, payload);
+                }
                 
                 event.setProcessedAt(OffsetDateTime.now());
                 outboxRepository.save(event);

@@ -27,6 +27,7 @@ public class LedgerTransaction {
     @Column(name = "transaction_date")
     private OffsetDateTime transactionDate;
 
+    @Builder.Default
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL)
     private List<JournalEntry> entries = new ArrayList<>();
 }
