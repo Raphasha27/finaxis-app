@@ -39,6 +39,16 @@
         
         .slide-in { animation: slide-in 0.5s forwards; }
         @keyframes slide-in { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* QR Code Simulation */
+        .qr-pattern {
+            background-image: 
+                linear-gradient(45deg, #0F172A 25%, transparent 25%, transparent 75%, #0F172A 75%, #0F172A),
+                linear-gradient(45deg, #0F172A 25%, transparent 25%, transparent 75%, #0F172A 75%, #0F172A);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            background-color: #2563EB;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
@@ -56,32 +66,33 @@
             </div>
             
             <div class="w-full space-y-12" id="onboarding-slides">
-                <div class="onboarding-slide active space-y-6">
-                    <div class="w-full aspect-square glass rounded-[48px] flex items-center justify-center">
-                        <i data-lucide="shield-check" class="w-32 h-32 text-blue-500"></i>
+                <div class="onboarding-slide active space-y-6 text-center">
+                    <div class="w-full aspect-square glass rounded-[48px] flex flex-col items-center justify-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-blue-600/20 blur-[40px] group-hover:bg-blue-600/40 transition-all duration-700"></div>
+                        <i data-lucide="shield-check" class="w-32 h-32 text-blue-500 relative z-10 mb-4 group-hover:scale-110 transition-transform duration-500"></i>
+                        <p class="text-blue-500 font-bold tracking-widest uppercase text-xs">ISO-27001 Secure</p>
                     </div>
-                    <div class="text-center">
-                        <h2 class="text-3xl font-black mb-4">Banking-Grade Security</h2>
-                        <p class="text-slate-400 leading-relaxed">Institutional ledger sync and velocity fraud detection to keep your funds safe at every event.</p>
-                    </div>
+                    <h2 class="text-3xl font-black mb-4">Banking-Grade Security</h2>
+                    <p class="text-slate-400 leading-relaxed text-sm">Institutional ledger sync and velocity fraud detection to keep your funds safe at every event.</p>
                 </div>
             </div>
 
             <div class="w-full space-y-6">
                 <div class="flex justify-center gap-2">
                     <div class="w-8 h-2 bg-blue-600 rounded-full"></div>
-                    <div class="w-2 h-2 bg-slate-800 rounded-full"></div>
-                    <div class="w-2 h-2 bg-slate-800 rounded-full"></div>
+                    <div class="w-2 h-2 bg-slate-800 rounded-full transition-colors duration-300 hover:bg-slate-600"></div>
+                    <div class="w-2 h-2 bg-slate-800 rounded-full transition-colors duration-300 hover:bg-slate-600"></div>
                 </div>
-                <button onclick="navigateTo('page-login')" class="w-full bg-blue-600 py-5 rounded-[24px] font-black text-lg shadow-xl shadow-blue-600/30">Get Started</button>
+                <button onclick="navigateTo('page-login')" class="w-full bg-blue-600 py-5 rounded-[24px] font-black text-lg shadow-xl shadow-blue-600/30 active:scale-95 transition-transform">Get Started</button>
                 <p class="text-center text-[10px] uppercase tracking-[0.2em] text-slate-500 font-bold mt-8">Created by Kirov Dynamics Technology</p>
             </div>
         </div>
 
         <!-- LOGIN SCREEN -->
         <div id="page-login" class="hidden flex-1 flex flex-col items-center justify-center p-10 page-transition">
-            <div class="mb-12">
-                <svg width="100" height="100" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="mb-12 relative group">
+                 <div class="absolute inset-0 bg-blue-600/20 blur-[40px] rounded-full group-hover:bg-blue-600/40 transition-all duration-700"></div>
+                <svg width="100" height="100" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" class="relative z-10 neon-blue rounded-[30px]">
                     <rect width="512" height="512" rx="120" fill="#0F172A"/>
                     <path d="M120 160H352V352H160V160Z" fill="url(#p0)"/>
                     <defs><linearGradient id="p0" x1="120" y1="120" x2="392" y2="392" gradientUnits="userSpaceOnUse"><stop stop-color="#2563EB"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
@@ -91,44 +102,50 @@
             <p class="text-slate-500 mb-12">Secure login to FinAxis Hub</p>
             
             <div class="w-full space-y-4 mb-8">
-                <div class="glass p-5 rounded-2xl flex items-center gap-4">
+                <div class="glass p-5 rounded-2xl flex items-center gap-4 focus-within:border-blue-500 transition-colors">
                     <i data-lucide="mail" class="w-5 h-5 text-slate-500"></i>
-                    <input type="text" value="raphasha@kirov.com" class="bg-transparent border-none outline-none flex-1 text-sm font-bold" readonly>
+                    <input type="text" value="raphasha@kirov.com" class="bg-transparent border-none outline-none flex-1 text-sm font-bold text-slate-200" readonly>
                 </div>
-                <div class="glass p-5 rounded-2xl flex items-center gap-4">
+                <div class="glass p-5 rounded-2xl flex items-center gap-4 focus-within:border-blue-500 transition-colors">
                     <i data-lucide="lock" class="w-5 h-5 text-slate-500"></i>
-                    <input type="password" value="••••••••" class="bg-transparent border-none outline-none flex-1 text-sm font-bold" readonly>
+                    <input type="password" value="••••••••" class="bg-transparent border-none outline-none flex-1 text-sm font-bold text-slate-200" readonly>
+                    <i data-lucide="fingerprint" class="w-5 h-5 text-blue-500 cursor-pointer hover:text-blue-400"></i>
                 </div>
             </div>
 
-            <button onclick="navigateTo('page-role')" class="w-full bg-blue-600 py-5 rounded-[24px] font-black text-lg shadow-xl shadow-blue-600/30 mb-6">Login Now</button>
+            <button onclick="navigateTo('page-role')" class="w-full bg-blue-600 py-5 rounded-[24px] font-black text-lg shadow-xl shadow-blue-600/30 mb-6 active:scale-95 transition-transform flex items-center justify-center gap-3">
+                <span>Login Now</span>
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
             
-            <p class="text-slate-500 text-xs">Don't have an account? <span class="text-blue-500 font-bold cursor-pointer">Register Hub</span></p>
+            <p class="text-slate-500 text-xs">Don't have an account? <span class="text-blue-500 font-bold cursor-pointer hover:underline">Register Hub</span></p>
         </div>
 
         <!-- ROLE SELECTION -->
         <div id="page-role" class="hidden flex-1 flex flex-col items-center justify-center p-10 page-transition">
             <h2 class="text-4xl font-bold mb-3">Identify Role</h2>
-            <p class="text-slate-500 mb-14 text-lg">Initialize your secure terminal</p>
+            <p class="text-slate-500 mb-14 text-lg text-center">Initialize your secure terminal for the current event</p>
             
             <div class="w-full space-y-6">
-                <button onclick="selectRole('ATTENDEE')" class="w-full glass p-10 rounded-[40px] flex flex-col items-center gap-6 hover:border-blue-500/50 transition-all active:scale-[0.98] group">
-                    <div class="p-5 bg-blue-600/10 rounded-3xl group-hover:bg-blue-600 transition-colors">
-                        <i data-lucide="user" class="text-blue-500 group-hover:text-white w-10 h-10"></i>
+                <button onclick="selectRole('ATTENDEE')" class="w-full glass p-10 rounded-[40px] flex flex-col items-center gap-6 hover:border-blue-500/50 hover:bg-white/[0.02] transition-all active:scale-[0.98] group relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-600/10 rounded-full blur-3xl group-hover:bg-blue-600/20 transition-all"></div>
+                    <div class="p-5 bg-blue-600/10 rounded-3xl group-hover:bg-blue-600 transition-colors shadow-lg shadow-blue-600/0 group-hover:shadow-blue-600/30">
+                        <i data-lucide="user" class="text-blue-500 group-hover:text-white w-10 h-10 transition-colors"></i>
                     </div>
-                    <div class="text-center">
+                    <div class="text-center relative z-10">
                         <span class="font-bold text-2xl block mb-2">Attendee</span>
-                        <p class="text-sm text-slate-500">Payments & AI Butler Access</p>
+                        <p class="text-sm text-slate-400">Payments & AI Butler Access</p>
                     </div>
                 </button>
 
-                <button onclick="selectRole('ORGANIZER')" class="w-full glass p-10 rounded-[40px] flex flex-col items-center gap-6 hover:border-blue-500/50 transition-all active:scale-[0.98] group">
-                    <div class="p-5 bg-blue-600/10 rounded-3xl group-hover:bg-blue-600 transition-colors">
-                        <i data-lucide="layout-dashboard" class="text-blue-500 group-hover:text-white w-10 h-10"></i>
+                <button onclick="selectRole('ORGANIZER')" class="w-full glass p-10 rounded-[40px] flex flex-col items-center gap-6 hover:border-emerald-500/50 hover:bg-white/[0.02] transition-all active:scale-[0.98] group relative overflow-hidden">
+                     <div class="absolute -left-10 -top-10 w-40 h-40 bg-emerald-600/10 rounded-full blur-3xl group-hover:bg-emerald-600/20 transition-all"></div>
+                    <div class="p-5 bg-emerald-500/10 rounded-3xl group-hover:bg-emerald-500 transition-colors shadow-lg shadow-emerald-500/0 group-hover:shadow-emerald-500/30">
+                        <i data-lucide="layout-dashboard" class="text-emerald-500 group-hover:text-white w-10 h-10 transition-colors"></i>
                     </div>
-                    <div class="text-center">
+                    <div class="text-center relative z-10">
                         <span class="font-bold text-2xl block mb-2">Organizer</span>
-                        <p class="text-sm text-slate-500">Security & Revenue Analytics</p>
+                        <p class="text-sm text-slate-400">Security & Revenue Analytics</p>
                     </div>
                 </button>
             </div>
@@ -139,7 +156,7 @@
             <!-- Top Header -->
             <header class="p-6 flex justify-between items-center sticky top-0 bg-bg/80 backdrop-blur-3xl z-50 border-b border-white/5">
                 <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 glass rounded-xl flex items-center justify-center">
+                    <div class="w-10 h-10 glass rounded-xl flex items-center justify-center shadow-lg cursor-pointer" onclick="switchTab('tab-home')">
                         <i data-lucide="zap" class="text-blue-500 w-5 h-5"></i>
                     </div>
                     <div>
@@ -147,9 +164,9 @@
                         <p id="role-label" class="text-[9px] uppercase font-bold text-blue-500 tracking-widest mt-1">SECURE TERMINAL</p>
                     </div>
                 </div>
-                <div class="flex gap-2">
-                    <button class="p-3 glass rounded-2xl text-slate-400 hover:text-white transition-all"><i data-lucide="shield" class="w-5 h-5"></i></button>
-                    <button onclick="navigateTo('page-auth')" class="p-3 glass rounded-2xl text-slate-400 hover:text-rose-500 transition-all"><i data-lucide="power" class="w-5 h-5"></i></button>
+                <div class="flex gap-3">
+                    <button class="p-3 glass rounded-2xl text-slate-400 hover:text-white hover:bg-white/10 transition-all active:scale-95" onclick="showToast('Security Audit Clean')"><i data-lucide="shield" class="w-5 h-5"></i></button>
+                    <button onclick="navigateTo('page-auth')" class="p-3 glass rounded-2xl text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-all active:scale-95"><i data-lucide="power" class="w-5 h-5"></i></button>
                 </div>
             </header>
 
@@ -162,185 +179,562 @@
                             <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
                             <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Network Secure</span>
                         </div>
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest bg-white/5 px-2 py-1 rounded-md">LIVE EVENT</span>
                     </div>
 
                     <!-- Hero Card -->
                     <div class="glass p-8 rounded-[40px] relative overflow-hidden group shadow-2xl border border-blue-500/20">
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-blue-600/20 rounded-bl-[100px] -mr-8 -mt-8 pointer-events-none"></div>
                         <h3 class="text-2xl font-black mb-1">Kirov Innovation Summit</h3>
-                        <p class="text-slate-400 text-xs mb-10 italic">April 27 - May 02, 2026</p>
+                        <p class="text-slate-400 text-xs mb-10 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-3 h-3 text-blue-500"></i> Sandton Convention Centre
+                        </p>
                         
-                        <div class="flex items-center justify-between">
+                        <div class="flex items-center justify-between relative z-10">
                             <div class="flex -space-x-3">
-                                <div class="w-10 h-10 rounded-full border-4 border-surface bg-slate-800"></div>
-                                <div class="w-10 h-10 rounded-full border-4 border-surface bg-slate-700"></div>
+                                <div class="w-10 h-10 rounded-full border-4 border-surface bg-slate-800 flex items-center justify-center overflow-hidden"><img src="https://i.pravatar.cc/100?img=1" class="w-full h-full object-cover opacity-80"/></div>
+                                <div class="w-10 h-10 rounded-full border-4 border-surface bg-slate-700 flex items-center justify-center overflow-hidden"><img src="https://i.pravatar.cc/100?img=2" class="w-full h-full object-cover opacity-80"/></div>
                                 <div class="w-10 h-10 rounded-full border-4 border-surface bg-blue-600 flex items-center justify-center text-[10px] font-bold">+2.4k</div>
                             </div>
-                            <button onclick="showToast('Access QR active')" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-[20px] text-sm font-black shadow-xl shadow-blue-600/30 transition-all active:scale-95">Access QR</button>
+                            <button onclick="openQRModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-[20px] text-sm font-black shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center gap-2">
+                                <i data-lucide="qr-code" class="w-4 h-4"></i> Access Pass
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Grid -->
+                    <!-- Quick Actions Grid -->
                     <div class="grid grid-cols-2 gap-4">
-                        <button onclick="openPayModal()" class="glass p-6 rounded-[32px] flex flex-col gap-4 text-left group transition-all hover:bg-white/[0.05]">
-                            <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500">
+                        <button onclick="openPayModal()" class="glass p-6 rounded-[32px] flex flex-col gap-4 text-left group transition-all hover:bg-white/[0.05] hover:border-amber-500/30">
+                            <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
                                 <i data-lucide="scan" class="w-6 h-6"></i>
                             </div>
-                            <h5 class="font-bold text-sm">Scan Pay</h5>
+                            <div>
+                                <h5 class="font-bold text-sm text-slate-200">Scan & Pay</h5>
+                                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">Zero Wait Time</p>
+                            </div>
                         </button>
-                        <button onclick="switchTab('tab-ai')" class="glass p-6 rounded-[32px] flex flex-col gap-4 text-left group transition-all hover:bg-white/[0.05]">
-                            <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
+                        <button onclick="switchTab('tab-ai')" class="glass p-6 rounded-[32px] flex flex-col gap-4 text-left group transition-all hover:bg-white/[0.05] hover:border-blue-500/30">
+                            <div class="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                                 <i data-lucide="bot" class="w-6 h-6"></i>
                             </div>
-                            <h5 class="font-bold text-sm">AI Butler</h5>
+                            <div>
+                                <h5 class="font-bold text-sm text-slate-200">AI Butler</h5>
+                                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-wider">Ask Anything</p>
+                            </div>
                         </button>
+                    </div>
+
+                    <!-- Upcoming Schedule widget -->
+                    <div class="glass p-6 rounded-[32px] space-y-4">
+                         <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-sm">Up Next</h4>
+                            <span class="text-xs text-blue-500 cursor-pointer">Full Schedule</span>
+                        </div>
+                        <div class="flex gap-4 items-center p-3 hover:bg-white/5 rounded-xl transition-colors cursor-pointer">
+                            <div class="bg-blue-600/20 text-blue-500 rounded-lg p-2 text-center w-14">
+                                <span class="block text-xs font-black">14:00</span>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold">Keynote: Future AI</p>
+                                <p class="text-xs text-slate-400">Mainstage Hall A</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- WALLET TAB -->
                 <div id="tab-wallet" class="tab-content space-y-10 py-6">
-                    <h3 class="text-3xl font-black">Enterprise Ledger</h3>
-                    <div class="bg-gradient-to-br from-blue-600 to-blue-900 p-10 rounded-[44px] text-white shadow-3xl shadow-blue-600/40">
-                        <p class="text-white/50 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Settlement Balance</p>
+                    <div class="flex justify-between items-end">
+                        <h3 class="text-3xl font-black">Event Wallet</h3>
+                        <span class="text-xs text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1 rounded-full"><i data-lucide="check-circle" class="w-3 h-3 inline mr-1"></i>Ledger Synced</span>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 p-10 rounded-[44px] text-white shadow-3xl shadow-blue-600/40 relative overflow-hidden">
+                        <div class="absolute -right-10 -bottom-10 opacity-10 rotate-12">
+                             <i data-lucide="nfc" class="w-48 h-48"></i>
+                        </div>
+                        <p class="text-white/70 text-[10px] font-black uppercase tracking-[0.3em] mb-2">Available Credits</p>
                         <h4 class="text-5xl font-black mb-12 tracking-tighter">R 24,500.00</h4>
-                        <div class="flex gap-4">
-                            <button onclick="showToast('Load credits initiated')" class="flex-1 bg-white text-blue-700 py-4.5 rounded-[20px] font-black text-sm shadow-xl">Load</button>
-                            <button onclick="showToast('Withdrawal initiated')" class="flex-1 bg-white/10 text-white border border-white/20 py-4.5 rounded-[20px] font-black text-sm">Withdraw</button>
+                        <div class="flex gap-4 relative z-10">
+                            <button onclick="showToast('Secure top-up gateway opening...')" class="flex-1 bg-white text-blue-800 py-4.5 rounded-[20px] font-black text-sm shadow-xl active:scale-95 transition-transform">Top Up</button>
+                            <button onclick="showToast('Withdrawal request queued via Outbox')" class="flex-1 bg-white/10 text-white border border-white/20 py-4.5 rounded-[20px] font-black text-sm hover:bg-white/20 active:scale-95 transition-all">Withdraw</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center px-2">
+                            <h4 class="font-extrabold text-lg">Transaction Vault</h4>
+                            <button onclick="addRandomTransaction()" class="text-blue-500 text-[10px] font-black uppercase tracking-widest hover:underline"><i data-lucide="refresh-cw" class="w-3 h-3 inline mr-1"></i>Sync</button>
+                        </div>
+                        <div class="space-y-3" id="transaction-list">
+                            <!-- Transactions populated here -->
+                            <div class="glass p-5 rounded-[32px] flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-slate-400"><i data-lucide="coffee" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <p class="font-bold text-sm">Summit Café</p>
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Today, 12:45 PM</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-black text-sm text-slate-200">-R 65.00</p>
+                                </div>
+                            </div>
+                            <div class="glass p-5 rounded-[32px] flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center text-emerald-500"><i data-lucide="arrow-down-left" class="w-5 h-5"></i></div>
+                                    <div>
+                                        <p class="font-bold text-sm">Initial Deposit</p>
+                                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Yesterday</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-black text-sm text-emerald-500">+R 25,000.00</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- ANALYTICS TAB -->
                 <div id="tab-analytics" class="tab-content space-y-10 py-6">
-                    <h3 class="text-3xl font-black">Security Analytics</h3>
-                    <div class="glass p-8 rounded-[40px] space-y-6">
-                        <div class="flex justify-between items-center">
-                            <h4 class="font-black text-blue-500">Safe Node Density</h4>
-                            <span class="text-2xl font-black">99.8%</span>
+                    <div class="flex justify-between items-end">
+                        <h3 class="text-3xl font-black">Live Analytics</h3>
+                        <span class="text-xs text-rose-500 font-bold bg-rose-500/10 px-3 py-1 rounded-full animate-pulse"><i data-lucide="activity" class="w-3 h-3 inline mr-1"></i>Live Data</span>
+                    </div>
+
+                    <!-- Fraud Pulse -->
+                    <div class="glass p-6 rounded-[32px] flex items-center gap-6 border-l-4 border-rose-500">
+                        <div class="w-14 h-14 bg-rose-500/20 rounded-2xl flex items-center justify-center shrink-0">
+                            <i data-lucide="shield-alert" class="text-rose-500 w-7 h-7"></i>
                         </div>
-                        <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-                            <div class="h-full bg-blue-600 shimmer" style="width: 99.8%"></div>
+                        <div>
+                            <p class="font-black text-slate-200 text-sm mb-1">Velocity Protection On</p>
+                            <p class="text-xs text-slate-400 font-medium leading-relaxed">AML engine is monitoring 1,420 live nodes. 0 anomalies detected in last hour.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass p-6 rounded-[32px] flex flex-col justify-between h-32 border-t-2 border-emerald-500">
+                            <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Gross Revenue</p>
+                            <div>
+                                <p class="text-2xl font-black">R 1.2M</p>
+                                <p class="text-emerald-500 text-xs font-bold mt-1 flex items-center"><i data-lucide="trending-up" class="w-3 h-3 mr-1"></i> 14% vs yesterday</p>
+                            </div>
+                        </div>
+                        <div class="glass p-6 rounded-[32px] flex flex-col justify-between h-32 border-t-2 border-blue-500">
+                             <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest">Active Attendees</p>
+                            <div>
+                                <p class="text-2xl font-black" id="live-attendees">4,892</p>
+                                <p class="text-blue-500 text-xs font-bold mt-1 flex items-center"><i data-lucide="users" class="w-3 h-3 mr-1"></i> Peak Capacity</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass p-8 rounded-[40px] space-y-8">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-black text-lg">Vendor Traffic Load</h4>
+                            <i data-lucide="bar-chart-2" class="w-5 h-5 text-slate-500"></i>
+                        </div>
+                        <div class="space-y-5" id="vendor-stats">
+                            <!-- Animated via JS -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-slate-300">
+                                    <span>Mainstage Bar</span>
+                                    <span class="text-blue-500" id="val-1">88%</span>
+                                </div>
+                                <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-600 transition-all duration-1000 ease-out shimmer" id="bar-1" style="width: 88%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-slate-300">
+                                    <span>VIP Catering</span>
+                                    <span class="text-emerald-500" id="val-2">45%</span>
+                                </div>
+                                <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-emerald-500 transition-all duration-1000 ease-out shimmer" id="bar-2" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-slate-300">
+                                    <span>Merch Plaza A</span>
+                                    <span class="text-amber-500" id="val-3">62%</span>
+                                </div>
+                                <div class="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-amber-500 transition-all duration-1000 ease-out shimmer" id="bar-3" style="width: 62%"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- AI BUTLER TAB -->
-                <div id="tab-ai" class="tab-content space-y-8 py-6 flex flex-col h-[70vh]">
-                    <h3 class="text-3xl font-black">AI Butler</h3>
-                    <div class="flex-1 overflow-y-auto space-y-6 pr-2" id="chat-box">
-                        <div class="flex gap-3">
-                            <div class="glass p-5 rounded-[28px] rounded-tl-none text-sm font-medium">
-                                Hi Raphasha! I am monitoring the Summit in real-time. Node #12 is currently open for pre-orders. Would you like a Latte?
+                <div id="tab-ai" class="tab-content space-y-6 py-6 flex flex-col h-[75vh]">
+                    <div class="flex items-center gap-4 px-2">
+                        <div class="w-12 h-12 bg-blue-600/20 rounded-2xl flex items-center justify-center shadow-inner border border-blue-500/30">
+                            <i data-lucide="bot" class="text-blue-500 w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-black">AI Assistant</h3>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Online & Ready</p>
                             </div>
                         </div>
                     </div>
-                    <div class="relative pt-4">
-                        <input type="text" placeholder="Command ecosystem..." class="w-full glass bg-slate-900/50 p-5 rounded-[28px] pr-16 text-sm">
-                        <button onclick="showToast('AI thinking...')" class="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 bg-blue-600 rounded-xl text-white"><i data-lucide="send" class="w-5 h-5"></i></button>
+
+                    <div class="flex-1 overflow-y-auto space-y-6 pr-2 custom-scrollbar" id="chat-box">
+                        <div class="flex gap-3">
+                            <div class="w-8 h-8 glass rounded-full flex items-center justify-center shrink-0 mt-1"><i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i></div>
+                            <div class="glass p-5 rounded-[24px] rounded-tl-none text-sm font-medium leading-relaxed shadow-lg">
+                                Welcome to the Kirov Innovation Summit! I'm your dedicated AI Butler. I can help you find vendors, check your schedule, or authorize payments hands-free.
+                                <br><br>
+                                Try asking: <em>"Where is the nearest coffee shop?"</em>
+                            </div>
+                        </div>
+                        <!-- Chat history added dynamically -->
+                    </div>
+                    
+                    <div class="relative pt-2 pb-4">
+                        <input type="text" id="ai-input" placeholder="Type a message..." class="w-full glass bg-slate-900/80 p-5 rounded-[28px] pr-16 text-sm border border-white/10 focus:border-blue-500/50 outline-none transition-colors" onkeypress="handleAIKeyPress(event)">
+                        <button onclick="sendAIMessage()" class="absolute right-4 top-1/2 -translate-y-[20%] p-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white shadow-lg active:scale-95 transition-all"><i data-lucide="send" class="w-5 h-5"></i></button>
                     </div>
                 </div>
             </main>
 
             <!-- Bottom Nav -->
             <nav class="fixed bottom-8 left-8 right-8 z-[100]">
-                <div class="glass max-w-sm mx-auto rounded-[40px] p-4 flex justify-between items-center shadow-3xl">
-                    <button onclick="switchTab('tab-home')" class="nav-btn p-4 rounded-2xl text-blue-500 bg-blue-500/10"><i data-lucide="home" class="w-7 h-7"></i></button>
-                    <button onclick="switchTab('tab-wallet')" class="nav-btn p-4 rounded-2xl text-slate-500"><i data-lucide="wallet" class="w-7 h-7"></i></button>
-                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center -mt-14 shadow-2xl active:scale-90 transition-all cursor-pointer border-[6px] border-bg" onclick="openPayModal()">
-                        <i data-lucide="scan" class="text-white w-7 h-7"></i>
+                <div class="glass max-w-sm mx-auto rounded-[40px] p-4 flex justify-between items-center shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-[#0F172A]/80">
+                    <button onclick="switchTab('tab-home')" class="nav-btn active-nav p-4 rounded-2xl text-blue-500 bg-blue-500/10 transition-colors"><i data-lucide="home" class="w-6 h-6"></i></button>
+                    <button onclick="switchTab('tab-wallet')" class="nav-btn p-4 rounded-2xl text-slate-500 hover:text-white transition-colors"><i data-lucide="wallet" class="w-6 h-6"></i></button>
+                    
+                    <!-- Floating Action Button -->
+                    <div class="relative -top-8">
+                        <div class="absolute inset-0 bg-blue-600 blur-xl opacity-50 rounded-full"></div>
+                        <div class="w-16 h-16 bg-gradient-to-tr from-blue-700 to-blue-500 rounded-full flex items-center justify-center shadow-2xl active:scale-90 transition-all cursor-pointer border-[4px] border-[#05070A] relative z-10" onclick="openPayModal()">
+                            <i data-lucide="scan-line" class="text-white w-7 h-7"></i>
+                        </div>
                     </div>
-                    <button onclick="switchTab('tab-analytics')" class="nav-btn p-4 rounded-2xl text-slate-500"><i data-lucide="bar-chart-3" class="w-7 h-7"></i></button>
-                    <button onclick="switchTab('tab-ai')" class="nav-btn p-4 rounded-2xl text-slate-500"><i data-lucide="bot" class="w-7 h-7"></i></button>
+                    
+                    <button onclick="switchTab('tab-analytics')" id="nav-analytics" class="nav-btn p-4 rounded-2xl text-slate-500 hover:text-white transition-colors"><i data-lucide="bar-chart-3" class="w-6 h-6"></i></button>
+                    <button onclick="switchTab('tab-ai')" class="nav-btn p-4 rounded-2xl text-slate-500 hover:text-white transition-colors"><i data-lucide="bot" class="w-6 h-6"></i></button>
                 </div>
             </nav>
         </div>
 
-        <!-- MODAL -->
+        <!-- PAYMENT MODAL -->
         <div id="modal-pay" class="hidden fixed inset-0 z-[200] flex flex-col justify-end">
-            <div onclick="closePayModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-            <div class="relative bg-[#0F172A] rounded-t-[50px] p-12 border-t border-white/10 translate-y-full transition-transform duration-700 ease-out" id="modal-sheet">
-                <div class="w-16 h-1.5 bg-slate-800 rounded-full mx-auto mb-12"></div>
-                <h3 class="text-3xl font-black mb-8">Authorize Vault</h3>
-                <div class="glass p-8 rounded-[36px] mb-12 flex justify-between items-center">
-                    <p class="font-black text-slate-300">Transaction</p>
-                    <p class="text-4xl font-black text-blue-500">R 0.00</p>
+            <div onclick="closePayModal()" class="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"></div>
+            <div class="relative bg-[#0F172A] rounded-t-[40px] p-8 pb-12 border-t border-white/10 translate-y-full transition-transform duration-500 ease-out shadow-[0_-20px_50px_rgba(0,0,0,0.5)]" id="modal-sheet">
+                <div class="w-12 h-1.5 bg-slate-700 rounded-full mx-auto mb-8"></div>
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-500"><i data-lucide="scan-line" class="w-6 h-6"></i></div>
+                    <div>
+                        <h3 class="text-2xl font-black">Scan to Pay</h3>
+                        <p class="text-xs text-slate-400">Hold camera up to vendor QR</p>
+                    </div>
                 </div>
-                <button onclick="closePayModal(); showToast('Transaction Authenticated')" class="w-full bg-blue-600 py-6 rounded-[28px] font-black text-xl shadow-2xl shadow-blue-600/40">Confirm & Authenticate</button>
+                
+                <div class="w-full aspect-square bg-[#05070A] rounded-[32px] border-2 border-dashed border-slate-700 flex flex-col items-center justify-center relative overflow-hidden mb-8 group cursor-pointer" onclick="simulatePayment()">
+                    <!-- Scanning line animation -->
+                    <div class="absolute top-0 left-0 right-0 h-1 bg-amber-500/50 shadow-[0_0_20px_rgba(245,158,11,0.5)] animate-[scan_2s_ease-in-out_infinite]"></div>
+                    <i data-lucide="qr-code" class="w-16 h-16 text-slate-600 group-hover:text-amber-500 transition-colors"></i>
+                    <p class="text-xs text-slate-500 mt-4 font-medium">Tap to simulate scan</p>
+                </div>
+                
+                <button onclick="closePayModal()" class="w-full py-4 rounded-2xl font-bold text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-colors">Cancel</button>
+            </div>
+        </div>
+
+        <!-- QR PASS MODAL -->
+        <div id="modal-qr" class="hidden fixed inset-0 z-[200] flex flex-col items-center justify-center px-6">
+            <div onclick="closeQRModal()" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+            <div class="relative bg-white rounded-[40px] p-8 w-full max-w-sm text-center transform scale-95 opacity-0 transition-all duration-300" id="qr-content">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-black text-slate-900">VIP Access Pass</h3>
+                    <p class="text-slate-500 text-sm font-medium">Raphasha Kirov</p>
+                </div>
+                
+                <div class="w-full aspect-square rounded-[24px] qr-pattern flex items-center justify-center relative overflow-hidden shadow-inner mb-6">
+                    <!-- Center Logo inside QR -->
+                    <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                        <i data-lucide="zap" class="w-8 h-8 text-blue-600"></i>
+                    </div>
+                </div>
+                
+                <div class="bg-slate-100 rounded-2xl p-4 flex items-center justify-between border border-slate-200">
+                    <div class="text-left">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ticket ID</p>
+                        <p class="text-sm font-black text-slate-800 font-mono">KV-8892-A7X</p>
+                    </div>
+                    <i data-lucide="copy" class="w-5 h-5 text-slate-400 cursor-pointer hover:text-blue-600 transition-colors" onclick="showToast('ID Copied')"></i>
+                </div>
+                
+                <button onclick="closeQRModal()" class="mt-6 w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-500 hover:bg-slate-200 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
             </div>
         </div>
 
         <!-- TOAST -->
-        <div id="app-toast" class="fixed top-10 left-10 right-10 z-[300] hidden">
-            <div class="glass border border-blue-500/50 p-6 rounded-[32px] flex items-center gap-5 shadow-2xl">
-                <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shrink-0"><i data-lucide="info" class="w-6 h-6"></i></div>
-                <p id="toast-msg" class="font-black text-sm uppercase tracking-widest text-blue-500"></p>
+        <div id="app-toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[300] hidden w-max max-w-[90vw]">
+            <div class="glass bg-[#0F172A]/95 border border-white/10 px-6 py-4 rounded-full flex items-center gap-3 shadow-[0_10px_40px_rgba(0,0,0,0.5)] transform translate-y-[-20px] transition-all duration-300" id="toast-content">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500 hidden" id="toast-icon-success"></i>
+                <i data-lucide="info" class="w-5 h-5 text-blue-500" id="toast-icon-info"></i>
+                <p id="toast-msg" class="font-bold text-sm text-white"></p>
             </div>
         </div>
     </div>
 
+    <style>
+        @keyframes scan {
+            0% { top: 10%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { top: 90%; opacity: 0; }
+        }
+        
+        /* Custom scrollbar for chat */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
+
     <script>
+        // Init Lucide Icons
         lucide.createIcons();
+
+        // App State
+        let currentUserRole = 'ATTENDEE';
 
         function navigateTo(pageId) {
             document.querySelectorAll('.page-transition').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-main').classList.add('hidden');
-            document.getElementById('page-onboarding').classList.add('hidden');
-            document.getElementById('page-login').classList.add('hidden');
-            document.getElementById('page-role').classList.add('hidden');
             
-            document.getElementById(pageId).classList.remove('hidden');
+            const target = document.getElementById(pageId);
+            target.classList.remove('hidden');
+            // Trigger reflow for animation if needed
+            void target.offsetWidth; 
+            
             lucide.createIcons();
         }
 
         function selectRole(role) {
+            currentUserRole = role;
             navigateTo('page-main');
+            
             const hubLabel = document.getElementById('role-label');
-            const analyticsBtn = document.querySelector('button[onclick="switchTab(\'tab-analytics\')"]');
+            const analyticsBtn = document.getElementById('nav-analytics');
             
             if (role === 'ATTENDEE') {
-                hubLabel.innerText = 'Attendee Hub';
-                analyticsBtn.parentElement.style.opacity = '0.4';
-                analyticsBtn.disabled = true;
+                hubLabel.innerText = 'Attendee Terminal';
+                analyticsBtn.style.display = 'none'; // Hide analytics for attendees
+                switchTab('tab-home');
             } else {
-                hubLabel.innerText = 'Organizer Terminal';
-                analyticsBtn.parentElement.style.opacity = '1';
-                analyticsBtn.disabled = false;
+                hubLabel.innerText = 'Organizer Hub';
+                analyticsBtn.style.display = 'block';
+                switchTab('tab-analytics'); // Default to analytics for organizers
             }
         }
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => {
+                t.classList.remove('active');
+            });
+            // Show target
             document.getElementById(tabId).classList.add('active');
             
+            // Update Nav Icons
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-blue-500', 'bg-blue-500/10');
+                btn.classList.remove('text-blue-500', 'bg-blue-500/10', 'active-nav');
                 btn.classList.add('text-slate-500');
             });
-            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
-            activeBtn.classList.add('text-blue-500', 'bg-blue-500/10');
-            activeBtn.classList.remove('text-slate-500');
             
-            lucide.createIcons();
+            const activeBtn = document.querySelector(`button[onclick="switchTab('${tabId}')"]`);
+            if(activeBtn) {
+                activeBtn.classList.add('text-blue-500', 'bg-blue-500/10', 'active-nav');
+                activeBtn.classList.remove('text-slate-500');
+            }
+            
+            // If opening analytics, start live data simulation
+            if(tabId === 'tab-analytics') {
+                startLiveDataSimulation();
+            }
         }
 
+        // --- Modals ---
+        
         function openPayModal() {
             const modal = document.getElementById('modal-pay');
             const sheet = document.getElementById('modal-sheet');
             modal.classList.remove('hidden');
-            setTimeout(() => { sheet.style.transform = 'translateY(0)'; }, 50);
+            setTimeout(() => { sheet.style.transform = 'translateY(0)'; }, 10);
         }
 
         function closePayModal() {
             const sheet = document.getElementById('modal-sheet');
             sheet.style.transform = 'translateY(100%)';
-            setTimeout(() => { document.getElementById('modal-pay').classList.add('hidden'); }, 500);
+            setTimeout(() => { document.getElementById('modal-pay').classList.add('hidden'); }, 400);
+        }
+        
+        function openQRModal() {
+            const modal = document.getElementById('modal-qr');
+            const content = document.getElementById('qr-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => { 
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById('app-toast');
-            document.getElementById('toast-msg').innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => { toast.classList.add('hidden'); }, 4000);
+        function closeQRModal() {
+            const content = document.getElementById('qr-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => { document.getElementById('modal-qr').classList.add('hidden'); }, 300);
         }
+
+        // --- Interactive Features ---
+
+        function simulatePayment() {
+            showToast('Processing payment via Ledger...', 'info');
+            setTimeout(() => {
+                closePayModal();
+                setTimeout(() => {
+                    showToast('-R 120.00 Paid to VIP Catering', 'success');
+                    addTransaction('VIP Catering', '-R 120.00', 'Just now');
+                }, 800);
+            }, 1000);
+        }
+
+        function addTransaction(vendor, amount, time) {
+            const list = document.getElementById('transaction-list');
+            const isPositive = amount.startsWith('+');
+            const html = `
+                <div class="glass p-5 rounded-[32px] flex justify-between items-center hover:bg-white/5 transition-colors cursor-pointer animate-[slide-in_0.3s_ease-out]">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center ${isPositive ? 'text-emerald-500' : 'text-slate-400'}">
+                            <i data-lucide="${isPositive ? 'arrow-down-left' : 'shopping-bag'}" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm">${vendor}</p>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">${time}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-sm ${isPositive ? 'text-emerald-500' : 'text-slate-200'}">${amount}</p>
+                    </div>
+                </div>
+            `;
+            list.insertAdjacentHTML('afterbegin', html);
+            lucide.createIcons();
+        }
+
+        function addRandomTransaction() {
+            const vendors = ['Merch Store', 'Food Truck', 'Mainstage Bar'];
+            const randomVendor = vendors[Math.floor(Math.random() * vendors.length)];
+            const randomAmount = `-R ${Math.floor(Math.random() * 200) + 50}.00`;
+            addTransaction(randomVendor, randomAmount, 'Just now');
+            showToast('Ledger synced successfully', 'success');
+        }
+
+        // --- AI Chat ---
+        function handleAIKeyPress(e) {
+            if(e.key === 'Enter') sendAIMessage();
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('ai-input');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            const chatBox = document.getElementById('chat-box');
+            
+            // Add user message
+            const userMsg = `
+                <div class="flex gap-3 flex-row-reverse animate-[slide-in_0.3s_ease-out]">
+                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center shrink-0 mt-1 shadow-lg shadow-blue-600/30"><i data-lucide="user" class="w-4 h-4 text-white"></i></div>
+                    <div class="bg-blue-600 text-white p-4 rounded-[24px] rounded-tr-none text-sm font-medium shadow-lg">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            chatBox.insertAdjacentHTML('beforeend', userMsg);
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+            lucide.createIcons();
+            
+            // Simulate AI reply
+            setTimeout(() => {
+                const aiMsg = `
+                    <div class="flex gap-3 animate-[slide-in_0.3s_ease-out]">
+                        <div class="w-8 h-8 glass rounded-full flex items-center justify-center shrink-0 mt-1 border border-blue-500/30"><i data-lucide="bot" class="w-4 h-4 text-blue-400"></i></div>
+                        <div class="glass p-4 rounded-[24px] rounded-tl-none text-sm font-medium leading-relaxed shadow-lg">
+                            I've logged that request in the ecosystem. You'll receive a push notification if action is required.
+                        </div>
+                    </div>
+                `;
+                chatBox.insertAdjacentHTML('beforeend', aiMsg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                lucide.createIcons();
+            }, 1000);
+        }
+
+        // --- Live Data Simulation ---
+        let simInterval;
+        function startLiveDataSimulation() {
+            if(simInterval) clearInterval(simInterval);
+            
+            simInterval = setInterval(() => {
+                // Update Bars
+                [1, 2, 3].forEach(id => {
+                    const newVal = Math.floor(Math.random() * 40) + 40; // 40-80%
+                    document.getElementById(`bar-${id}`).style.width = `${newVal}%`;
+                    document.getElementById(`val-${id}`).innerText = `${newVal}%`;
+                });
+                
+                // Update Attendees
+                const attendees = document.getElementById('live-attendees');
+                let currentCount = parseInt(attendees.innerText.replace(',', ''));
+                currentCount += Math.floor(Math.random() * 10) - 3; // slight upward trend
+                attendees.innerText = currentCount.toLocaleString();
+                
+            }, 3000);
+        }
+
+        // --- Utils ---
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('app-toast');
+            const content = document.getElementById('toast-content');
+            
+            document.getElementById('toast-msg').innerText = msg;
+            
+            if(type === 'success') {
+                document.getElementById('toast-icon-success').classList.remove('hidden');
+                document.getElementById('toast-icon-info').classList.add('hidden');
+                content.style.borderColor = 'rgba(16, 185, 129, 0.5)'; // emerald
+            } else {
+                document.getElementById('toast-icon-success').classList.add('hidden');
+                document.getElementById('toast-icon-info').classList.remove('hidden');
+                content.style.borderColor = 'rgba(59, 130, 246, 0.5)'; // blue
+            }
+            
+            toast.classList.remove('hidden');
+            setTimeout(() => { content.style.transform = 'translateY(0)'; }, 10);
+            
+            setTimeout(() => { 
+                content.style.transform = 'translateY(-20px)';
+                setTimeout(() => { toast.classList.add('hidden'); }, 300);
+            }, 3000);
+        }
+        
+        // Initial setup
+        setTimeout(() => {
+             // Add initial default icons
+             lucide.createIcons();
+        }, 100);
     </script>
 </body>
 </html>
